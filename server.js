@@ -1,15 +1,20 @@
 require("dotenv").config();
 const express = require("express");
 const server = express();
+const session = require("express-session");
+const passport = require("./config/passport");
 const port = process.env.PORT;
 const path = require("node:path");
-const passport = require("passport");
-const session = require("express-session");
-
-const { PrismaClient } = require("@prisma/client");
-const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 
 const prisma = new PrismaClient();
+const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
+
+server.set("view engine", "ejs");
+server.set("views", path.join(__dirname, "views"));
+server.use(express.static("public"));
+server.use(express.urlencoded({ extended: false }));
+
+// SESSION
 
 server.use(
   session({
@@ -19,7 +24,7 @@ server.use(
     secret: "a santa at nasa",
     resave: true,
     saveUninitialized: true,
-    store: new PrismaSessionStore(new PrismaClient(), {
+    store: new PrismaSessionStore(prisma, {
       checkPeriod: 2 * 60 * 1000, //ms
       dbRecordIdIsSessionId: true,
       dbRecordIdFunction: undefined,
@@ -27,6 +32,9 @@ server.use(
   })
 );
 
-server.set("view engine", "ejs");
-server.set("views", path.join(__dirname, "views"));
-app.use(express.urlencoded({ extended: false }));
+server.listen(port, (err) => {
+  if (err) {
+    console.log(err.message);
+  }
+  console.log(`active`);
+});
