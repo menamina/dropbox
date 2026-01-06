@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../login-signup.css" />
+  </head>
+  <body>
+    <div class="mainDiv">
+      <div class="container">
+        <h1>sign up</h1>
+
+        <form action="/" method="POST">
+          <div>
+            <label for="name" hidden></label>
+            <input name="name" type="text" placeholder="Name" />
+            <label for="username" hidden></label>
+            <input name="username" type="text" placeholder="Username" />
+          </div>
+
+          <div>
+            <label for="email" hidden></label>
+            <input name="email" type="email" placeholder="Email" />
+            <label for="password" hidden></label>
+            <input name="password" type="password" placeholder="Password" />
+            <label for="confirmPass" hidden></label>
+            <input
+              name="confirmPass"
+              type="password"
+              placeholder="Confirm Password"
+            />
+          </div>
+        </form>
+
+        <div class="register">
+          <div>don't have an account?</div>
+          <a href="/sign-up">register</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
