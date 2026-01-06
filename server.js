@@ -6,7 +6,7 @@ const passport = require("./config/passport");
 const port = process.env.PORT;
 const path = require("node:path");
 
-const prisma = new PrismaClient();
+const prisma = require("./prisma/client");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 
 server.set("view engine", "ejs");
@@ -31,6 +31,11 @@ server.use(
     }),
   })
 );
+
+// PASSPORT
+
+server.use(passport.initialize());
+server.use(passport.session());
 
 server.listen(port, (err) => {
   if (err) {
