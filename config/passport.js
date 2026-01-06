@@ -1,10 +1,10 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
-const bycrpt = require("bycrypt");
 const prisma = require("../prisma/client");
+const { verifyPass } = require("../utils/password");
 
 passport.use(
-  new LocalStratgey(async (username, password, done) => {
+  new LocalStrategy(async (username, password, done) => {
     try {
       const user = await prisma.user.findUnique({
         where: { username },
@@ -13,8 +13,9 @@ passport.use(
         return done(null, false, { message: "Incorrect username" });
       }
 
-      const match = 0;
-      if (!match) {
+      const isMatch = await verifyPass(password, user.password);
+
+      if (!isMatch) {
         return done(null, false, { message: "incorrect password" });
       }
 
