@@ -9,6 +9,8 @@ const path = require("node:path");
 const prisma = require("./prisma/client");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 
+const routes = require("./routes/routes");
+
 server.set("view engine", "ejs");
 server.set("views", path.join(__dirname, "views"));
 server.use(express.static("public"));
@@ -36,6 +38,8 @@ server.use(
 
 server.use(passport.initialize());
 server.use(passport.session());
+
+server.use("/", routes);
 
 server.listen(port, (err) => {
   if (err) {
