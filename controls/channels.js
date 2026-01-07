@@ -16,34 +16,6 @@ function getSignUp(req, res) {
   });
 }
 
-async function authLogin(req, res) {
-  const { email, password } = req.body;
-  try {
-    const foundUser = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (!foundUser) {
-      return res.render("login", {
-        emailErr: `entered email not found`,
-        passwordErr: null,
-      });
-    } else if (foundUser) {
-      const samePass = verifyPass(password, foundUser.saltedHash);
-
-      if (!samePass) {
-        return res.render("login", {
-          emailErr: null,
-          passwordErr: "incorrect password",
-        });
-      }
-      res.render("home");
-    }
-  } catch (err) {
-    res.send(`controller err @ authLogin - msg: ${err.message}`);
-  }
-}
-
 async function authSignUp(req, res) {
   try {
     const { name, username, email, password, confirmPass } = req.body;
@@ -95,6 +67,5 @@ async function authSignUp(req, res) {
 module.exports = {
   login,
   getSignUp,
-  authLogin,
   authSignUp,
 };
