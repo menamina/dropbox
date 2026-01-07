@@ -12,12 +12,21 @@
             <label for="name" hidden></label>
             <input name="name" type="text" placeholder="Name" />
             <label for="username" hidden></label>
+            <% if usernameTaken { %>
+            <p><%=usernameTaken%></p>
+            <% } %>
             <input name="username" type="text" placeholder="Username" />
           </div>
 
           <div>
             <label for="email" hidden></label>
+            <% if emailInUse { %>
+            <p><%=emailInUse%></p>
+            <% } %>
             <input name="email" type="email" placeholder="Email" />
+            <% if passwordMisMatch { %>
+            <p><%= passwordMisMAtch %></p>
+            <% } %>
             <label for="password" hidden></label>
             <input name="password" type="password" placeholder="Password" />
             <label for="confirmPass" hidden></label>

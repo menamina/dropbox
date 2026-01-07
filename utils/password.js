@@ -1,17 +1,17 @@
-const bycrypt = require("bycrypt");
+const bcrypt = require("bcrypt");
 const salt = 15;
 
 async function hashThisEnteredPassword(password) {
-  const hashed = bycrypt.hash(password, salt);
+  const hashed = bcrypt.hash(password, salt);
   return hashed;
 }
 
 async function verifyPass(password, hashed) {
-  const match = bycrypt.compare(password, hashed);
+  const match = bcrypt.compare(password, hashed);
   return match;
 }
 
-module.exports {
-    hashThisEnteredPassword,
-    verifyPass
-}
+module.exports = {
+  hashThisEnteredPassword,
+  verifyPass,
+};

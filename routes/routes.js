@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const router = Router();
 const remote = require("../controls/channels");
+const validators = require("../utils/validators");
 
 router.get("/", remote.login);
 router.get("/sign-up", remote.getSignUp);

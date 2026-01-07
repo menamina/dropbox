@@ -12,3 +12,19 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model user {
+  id Int @id @default(autoincrement())
+  name String
+  username String @unique
+  email String @unique
+  saltedHash String
+
+}
+
+model File {
+  id Int @id @default(autoincrement())
+  name String
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+}
