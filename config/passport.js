@@ -4,26 +4,29 @@ const prisma = require("../prisma/client");
 const { verifyPass } = require("../utils/password");
 
 passport.use(
-  new LocalStrategy(async (username, password, done) => {
-    try {
-      const user = await prisma.user.findUnique({
-        where: { username },
-      });
-      if (!user) {
-        return done(null, false, { message: "Incorrect username" });
+  new LocalStrategy(
+    { usernameField: "email" },
+    async (email, password, done) => {
+      try {
+        const user = await prisma.user.findUnique({
+          where: { email },
+        });
+        if (!user) {
+          return done(null, false, { message: "incorrect email" });
+        }
+
+        const isMatch = await verifyPass(password, user.saltedHash);
+
+        if (!isMatch) {
+          return done(null, false, { message: "incorrect password" });
+        }
+
+        return done(null, user);
+      } catch (error) {
+        return done(error);
       }
-
-      const isMatch = await verifyPass(password, user.password);
-
-      if (!isMatch) {
-        return done(null, false, { message: "incorrect password" });
-      }
-
-      return done(null, user);
-    } catch (error) {
-      return done(error);
     }
-  })
+  )
 );
 
 passport.serializeUser((user, done) => {
