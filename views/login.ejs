@@ -8,7 +8,13 @@
         <h1>welcome back</h1>
         <form class="loginForm" action="/" method="POST">
           <label hidden for="email"></label>
+          <% if emailErr { %>
+          <p><%=emailErr%></p>
+          <% } %>
           <input name="email" placeholder="Email" />
+          <% if passwordErr { %>
+          <p><%=passwordErr%></p>
+          <% } %>
           <label hidden for="password"></label>
           <input name="password" />
         </form>
