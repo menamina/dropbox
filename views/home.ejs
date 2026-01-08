@@ -8,8 +8,14 @@
         <div class="userinfo sign-out"></div>
         <div class="newFolder"></div>
         <div class="allFolders">
-          <div>view all folders</div>
+          <% if (folders && folders.length > 0) { %> <% folders.slice(0,
+          10).forEach(folder => { %>
+          <div class="<%folder.name%>" data-folder-id="<%= folder.id %>">
+            <%= folder.name %>
+          </div>
+          <% }) %> <% } %>
         </div>
+        <div class="viewAll">view all folders</div>
         <div class="trash">
           <img class="trash icon" />
           <a href="/trash">trash</a>
