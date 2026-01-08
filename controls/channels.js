@@ -69,11 +69,23 @@ async function renderHome(req, res) {
     return res.redirect("/login");
   }
   try {
+    let files = [];
     const folders = await prisma.folder.findMany({
-      where: 
-    })
-  } catch(err){
-     res.send(`controller error @ renderHome - msg: ${err.message}`);
+      where: { userId: req.user.id },
+    });
+
+    if (folders.length > 0) {
+      files = await prisma.file.findMany({
+        where: { folderId: folders[0].id },
+      });
+    }
+
+    res.render("home", {
+      folders: folders,
+      files: files,
+    });
+  } catch (err) {
+    res.send(`controller error @ renderHome - msg: ${err.message}`);
   }
 }
 
