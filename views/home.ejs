@@ -23,21 +23,52 @@
       </div>
 
       <div class="rightSide">
-        <div class="folderName"></div>
+        <div class="folderName">
+          <div class="enteredFolder"><%=folders[0].name%></div>
+        </div>
         <div class="filesIn SelectedFolderGrid">
           <div>
-            <label hidden for="searchBar"></label
-            ><input class="searchBar" name="searchBar" placeholder="search" />
+            <label hidden for="searchBar"></label>
+            <input class="searchBar" name="searchBar" placeholder="search" />
           </div>
-          <div class="fileHolder"></div>
+          <div class="options hidden">
+            <div>
+              <div><a href="/home/:folder/:file">open</a></div>
+              <div>download</div>
+              <div>edit</div>
+              <div>
+                <form action="/delete" method="POST">
+                  <button type="submit">delete</button>
+                </form>
+              </div>
+              <div>x</div>
+            </div>
+          </div>
+          <div class="fileHolder">
+            <% if (files) { %> <% files.forEach((file) => { %>
+            <div class="file" id="<%file.id%>">
+              <div>preview if possible?</div>
+              <div><%= file.name %></div>
+            </div>
+            <% }) %> <% } %>
+          </div>
         </div>
       </div>
     </div>
   </body>
   <script>
-    const search = document.querySelector("searchBar");
-    search.addEventListener("input", (e) => {
-      e.preventDefault();
-    });
+    function search() {
+      const search = document.querySelector(".searchBar");
+      search.addEventListener("input", (e) => {
+        const query = e.target.value;
+      });
+    }
+
+    function openOptions() {
+      const file = document.querySelector(".file");
+      const optionsDiv = document.querySelector(".options");
+      file.addEventListener(click, (e) => {});
+      optionsDiv.classList.remove("hidden");
+    }
   </script>
 </html>
