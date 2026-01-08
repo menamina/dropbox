@@ -1,5 +1,5 @@
 const prisma = require("../prisma/client");
-const { hashThisEnteredPassword, verifyPass } = require("../utils/password");
+const { hashThisEnteredPassword } = require("../utils/password");
 
 function login(req, res) {
   res.render("login", {
@@ -64,8 +64,22 @@ async function authSignUp(req, res) {
   }
 }
 
+async function renderHome(req, res) {
+  if (!req.isAuthenticated()) {
+    return res.redirect("/login");
+  }
+  try {
+    const folders = await prisma.folder.findMany({
+      where: 
+    })
+  } catch(err){
+     res.send(`controller error @ renderHome - msg: ${err.message}`);
+  }
+}
+
 module.exports = {
   login,
   getSignUp,
   authSignUp,
+  renderHome,
 };

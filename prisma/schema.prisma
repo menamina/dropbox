@@ -20,13 +20,26 @@ model User {
   email String @unique
   saltedHash String
 
+  folders Folder[]
   files File[]
 
+}
+
+model Folder {
+  id Int @id @default(autoincrement())
+  name String
+
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  files File[]
 }
 
 model File {
   id Int @id @default(autoincrement())
   name String
+
+  folderId Int 
+  folder Folder @relation(fields: [folderId], references:[id])
   
   user User @relation(fields: [userId], references: [id])
   userId Int

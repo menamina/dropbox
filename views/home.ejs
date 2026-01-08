@@ -12,11 +12,26 @@
         </div>
         <div class="trash">
           <img class="trash icon" />
-          <div>trash</div>
+          <a href="/trash">trash</a>
         </div>
       </div>
 
-      <div class="rightSide"></div>
+      <div class="rightSide">
+        <div class="folderName"></div>
+        <div class="filesIn SelectedFolderGrid">
+          <div>
+            <label hidden for="searchBar"></label
+            ><input class="searchBar" name="searchBar" placeholder="search" />
+          </div>
+          <div class="fileHolder"></div>
+        </div>
+      </div>
     </div>
   </body>
+  <script>
+    const search = document.querySelector("searchBar");
+    search.addEventListener("input", (e) => {
+      e.preventDefault();
+    });
+  </script>
 </html>

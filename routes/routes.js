@@ -7,6 +7,8 @@ const passport = require("../config/passport");
 router.get("/", remote.login);
 router.get("/sign-up", remote.getSignUp);
 
+router.post("/sign-up", validators, remote.authSignUp);
+
 router.post("/", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) return next(err);
@@ -25,6 +27,6 @@ router.post("/", (req, res, next) => {
   })(req, res, next);
 });
 
-router.post("/sign-up", validators, remote.authSignUp);
+router.get("/home", remote.renderHome);
 
 module.exports = router;
