@@ -66,7 +66,7 @@ async function authSignUp(req, res) {
 
 async function renderHome(req, res) {
   if (!req.isAuthenticated()) {
-    return res.redirect("/login");
+    return res.redirect("login");
   }
   try {
     const folders = await prisma.folder.findMany({
@@ -75,14 +75,15 @@ async function renderHome(req, res) {
     });
 
     if (folders.length === 0) {
-      res.render("/home", {
+      return res.render("home", {
         folders: [],
         currentFolder: null,
         files: [],
-        emptyMesage: "No folders yet. Create one to get started.",
+        emptyMessage: "No folders yet. Create one to get started.",
       });
+    } else {
+      return res.redirect(`/home/${folders[0].id}`);
     }
-    return res.redirect(`home/${folders[0].id}`);
   } catch (err) {
     res.send(`controller error @ renderHome - msg: ${err.message}`);
   }
@@ -90,7 +91,7 @@ async function renderHome(req, res) {
 
 async function fullHomePage(req, res) {
   if (!req.isAuthenticated()) {
-    return res.redirect("/login");
+    return res.redirect("login");
   }
 
   try {
@@ -112,7 +113,7 @@ async function fullHomePage(req, res) {
     files = currentFiles;
 
     if (!currentFolder) {
-      res.redirect("/home");
+      res.redirect("home");
     }
 
     res.render("fullHomePage", {
