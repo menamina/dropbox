@@ -26,3 +26,7 @@ const signUpValidator = [
     next();
   },
 ];
+
+module.exports = {
+  signUpValidator,
+};

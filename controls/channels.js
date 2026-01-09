@@ -65,9 +65,6 @@ async function authSignUp(req, res) {
 }
 
 async function renderHome(req, res) {
-  if (!req.isAuthenticated()) {
-    return res.redirect("login");
-  }
   try {
     const folders = await prisma.folder.findMany({
       where: { userId: req.user.id },
@@ -90,13 +87,8 @@ async function renderHome(req, res) {
 }
 
 async function fullHomePage(req, res) {
-  if (!req.isAuthenticated()) {
-    return res.redirect("login");
-  }
-
   try {
     const { folderID } = req.params;
-    let files = [];
     const folders = await prisma.folder.findMany({
       where: { userId: req.user.id },
       orderBy: { createdAt: "asc" },
@@ -106,22 +98,25 @@ async function fullHomePage(req, res) {
       where: { id: folderID, userId: req.user.id },
     });
 
-    const currentFiles = await prisma.file.findMany({
-      where: { folderId: currentFolder.id },
-    });
-
-    files = currentFiles;
-
     if (!currentFolder) {
-      res.redirect("home");
-    }
+      return res.redirect("/home" {
+        folders: folders,
+        currentFolder: null,
+        files: [],
+        emptyMessage: "The folder you are looking for does not exist.",
+      });
+    } else {
+      const currentFiles = await prisma.file.findMany({
+        where: { folderId: currentFolder.id },
+      });
 
-    res.render("fullHomePage", {
-      folders: folders,
-      currentFolder: currentFolder,
-      files: currentFiles,
-      emptyMessage: null,
-    });
+      return res.render("fullHomePage", {
+        folders: folders,
+        currentFolder: currentFolder,
+        files: currentFiles,
+        emptyMessage: null,
+      });
+    }
   } catch (err) {
     res.send(`controller error @ fullHomePage - msg: ${err.message}`);
   }

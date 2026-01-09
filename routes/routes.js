@@ -1,13 +1,14 @@
 const { Router } = require("express");
 const router = Router();
 const remote = require("../controls/channels");
-const validators = require("../utils/validators");
 const passport = require("../config/passport");
+const { signUpValidator } = require("../utils/validators");
+const { requireAuth } = require("../utils/middleware");
 
 router.get("/", remote.login);
 router.get("/sign-up", remote.getSignUp);
 
-router.post("/sign-up", validators, remote.authSignUp);
+router.post("/sign-up", signUpValidator, remote.authSignUp);
 
 router.post("/", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
@@ -27,17 +28,17 @@ router.post("/", (req, res, next) => {
   })(req, res, next);
 });
 
-router.get("/home", remote.renderHome);
+router.get("/home", requireAuth, remote.renderHome);
 
-router.get("/home/:folderID", remote.fullHomePage);
-router.get("/home//:folderID/:fileID");
-router.get("/home/view-all-folders");
+router.get("/home/:folderID", requireAuth, remote.fullHomePage);
+router.get("/home//:folderID/:fileID", requireAuth);
+router.get("/home/view-all-folders", requireAuth);
 
 router.post("/");
-router.post("/updateFileName", router.postUpdatedFileName);
-router.post("/deleteFile", remote.postDelete);
+router.post("/updateFileName", requireAuth, router.postUpdatedFileName);
+router.post("/deleteFile", requireAuth, remote.postDelete);
 
-router.post("/updateFolder", remote.postUpdateFolder);
-router.post("/deleteFolder", remote.postDeleteFolder);
+router.post("/updateFolder", requireAuth, remote.postUpdateFolder);
+router.post("/deleteFolder", requireAuth, remote.postDeleteFolder);
 
 module.exports = router;
