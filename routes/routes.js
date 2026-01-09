@@ -29,6 +29,14 @@ router.post("/", (req, res, next) => {
 
 router.get("/home", remote.renderHome);
 
-router.get("/home/:folderID/:fileName");
+router.get("/home/:folderName/:folderID");
+router.get("/home/:folderName/:folderID/:fileName/:fileID");
+router.get("/home/view-all-folders");
+
+router.post("/updateFileName", router.postUpdatedFileName);
+router.post("/deleteFile", remote.postDelete);
+
+router.post("/updateFolder", remote.postUpdateFolder);
+router.post("/deleteFolder", remote.postDeleteFolder);
 
 module.exports = router;

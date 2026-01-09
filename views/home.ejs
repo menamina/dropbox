@@ -11,7 +11,7 @@
           <% if (folders && folders.length > 0) { %> <% folders.slice(0,
           10).forEach(folder => { %>
           <div class="<%folder.name%>" data-folder-id="<%= folder.id %>">
-            <a href="/home/folders/<%=folder.name%>"><%= folder.name %></a>
+            <a href="/home/<%=folder.name%>/<%=folder.id%>"><%= folder.name %></a>
           </div>
           <% }) %> <% } %>
         </div>
