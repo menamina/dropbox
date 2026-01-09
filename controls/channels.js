@@ -69,26 +69,20 @@ async function renderHome(req, res) {
     return res.redirect("/login");
   }
   try {
-    let files = [];
     const folders = await prisma.folder.findMany({
       where: { userId: req.user.id },
       orderBy: { createdAt: "asc" },
     });
 
-    if (folders.length > 0) {
-      files = await prisma.file.findMany({
-        where: { folderId: folders[0].id },
-        orderBy: { createdAt: "asc" },
-      });
-
-      return res.redirect(`home/${folders[0].name}/${folders[0].id}`);
-    } else {
+    if (folders.length === 0) {
       res.render("/home", {
         folders: [],
         currentFolder: null,
         files: [],
+        emptyMesage: "No folders yet. Create one to get started.",
       });
     }
+    return res.redirect(`home/${folders[0].id}`);
   } catch (err) {
     res.send(`controller error @ renderHome - msg: ${err.message}`);
   }
@@ -100,47 +94,32 @@ async function fullHomePage(req, res) {
   }
 
   try {
-    if (!req.isAuthenticated()) {
-      return res.redirect("/login");
-    }
+    const { folderID } = req.params;
     let files = [];
     const folders = await prisma.folder.findMany({
       where: { userId: req.user.id },
       orderBy: { createdAt: "asc" },
     });
 
-    const { folderName, folderID } = req.params;
-
-    const isFolder = await prisma.folder.findUnique({
-      where: { id: folderID },
+    const currentFolder = await prisma.folder.findFirst({
+      where: { id: folderID, userId: req.user.id },
     });
 
     const currentFiles = await prisma.file.findMany({
-      where: { folderId: folderID },
+      where: { folderId: currentFolder.id },
     });
-
-    if (!currentFiles) {
-      res.render("fullHomePage", {
-        folders: folders,
-        currentFolder: folderName,
-        files: [],
-      });
-    }
-
-    if (!isFolder) {
-      res.render("fullHomePage", {
-        folders: folders,
-        currentFolder: [],
-        files: currentFiles,
-      });
-    }
 
     files = currentFiles;
 
+    if (!currentFolder) {
+      res.redirect("/home");
+    }
+
     res.render("fullHomePage", {
       folders: folders,
-      currentFolder: folderName,
+      currentFolder: currentFolder,
       files: currentFiles,
+      emptyMessage: null,
     });
   } catch (err) {
     res.send(`controller error @ fullHomePage - msg: ${err.message}`);

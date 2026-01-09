@@ -29,8 +29,8 @@ router.post("/", (req, res, next) => {
 
 router.get("/home", remote.renderHome);
 
-router.get("/home/:folderName/:folderID", remote.fullHomePage);
-router.get("/home/:folderName/:folderID/:fileName/:fileID");
+router.get("/home/:folderID", remote.fullHomePage);
+router.get("/home//:folderID/:fileID");
 router.get("/home/view-all-folders");
 
 router.post("/");
