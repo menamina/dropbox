@@ -29,4 +29,6 @@ router.post("/", (req, res, next) => {
 
 router.get("/home", remote.renderHome);
 
+router.get("/home/:folderID/:fileName");
+
 module.exports = router;

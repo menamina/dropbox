@@ -11,11 +11,11 @@
           <% if (folders && folders.length > 0) { %> <% folders.slice(0,
           10).forEach(folder => { %>
           <div class="<%folder.name%>" data-folder-id="<%= folder.id %>">
-            <%= folder.name %>
+            <a href="/home/folders/<%=folder.name%>"><%= folder.name %></a>
           </div>
           <% }) %> <% } %>
         </div>
-        <div class="viewAll">view all folders</div>
+        <div class="viewAll"><a href="/home/view-all-folders">view all folders</a></div>
         <div class="trash">
           <img class="trash icon" />
           <a href="/trash">trash</a>
@@ -33,7 +33,7 @@
           </div>
           <div class="options hidden">
             <div>
-              <div><a class="linkTo" href="">open</a></div>
+              <div><a class="linkTo">open</a></div>
               <div class="download">download</div>
               <div>
                 <div class="edit">edit</div>
@@ -42,16 +42,15 @@
                     <label>name:</label>
                     <input name="name" class="editFileName" >
                     <input hidden name="fileID" class="editFileNameId" >
+                    <input name="folderName" >
                     <button type="submit">update</button>
                     <div>cancel</div>
                   </form>
                 </div>
               <div>
-                <form action="/deleteFile" method="POST">
-                  <input class="deleteFileName" hidden name="fileName" >
+                <form action="/deleteFile" method="POST"  onsubmit="return confirm('Are you sure you want to delete this?')"></form>
                   <input class="deleteFileID" hidden name="fileID" >
-                  <button type="submit" class="delete">delete
-                    </button>
+                  <button type="submit" class="delete">delete</button>
                 </form>
               </div>
               <div class="x" onclick="closeOptions()">x</div>
@@ -88,8 +87,10 @@
       const fileID = e.target.dataset.fileID;
       const fileName = e.target.dataset.fileName;
 
-      const open = document.querySelector(".linkTo");
       const download = document.querySelector(".download");
+
+      const openLink = document.querySelector(".linkTo");
+      openLink.href = `/home/${folderID}/${fileName}`;
 
       const edit = document.querySelector(".linkTo");
       edit.addEventListener("click", (e) => {
@@ -103,9 +104,7 @@
 
       const deleteBtn = document.querySelector(".delete");
       deleteBtn.addEventListener("click", (e) => {
-        const deleteFileName = document.querySelector(".deleteFileName");
         const deleteFileID = document.querySelector(".deleteFileID");
-        deleteFileName.value = fileName;
         deleteFileID.value = fileID;
       })
 
