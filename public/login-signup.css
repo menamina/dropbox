@@ -1,0 +1,34 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.mainDiv,
+.container,
+form {
+  display: flex;
+}
+
+.container,
+form {
+  flex-direction: column;
+}
+
+.mainDiv {
+  height: 100vh;
+  width: 100vw;
+}
+
+.mainDiv,
+.container,
+form {
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  gap: 20px;
+}
+
+/* ^ flex ^ */

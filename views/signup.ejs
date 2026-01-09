@@ -9,12 +9,14 @@
 
         <form class="signupForm" action="/" method="POST">
           <div>
-            <label for="name" hidden></label>
-            <input name="name" type="text" placeholder="Name" />
-            <label for="username" hidden></label>
             <% if usernameTaken { %>
             <p><%=usernameTaken%></p>
             <% } %>
+          </div>
+          <div>
+            <label for="name" hidden></label>
+            <input name="name" type="text" placeholder="Name" />
+            <label for="username" hidden></label>
             <input name="username" type="text" placeholder="Username" />
           </div>
 
@@ -39,8 +41,8 @@
         </form>
 
         <div class="register">
-          <div>don't have an account?</div>
-          <a href="/sign-up">register</a>
+          <div>already have an account?</div>
+          <a href="/login">login</a>
         </div>
       </div>
     </div>
