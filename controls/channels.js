@@ -72,18 +72,19 @@ async function renderHome(req, res) {
     let files = [];
     const folders = await prisma.folder.findMany({
       where: { userId: req.user.id },
+      orderBy: { createdAt: "asc" },
     });
 
     if (folders.length > 0) {
       files = await prisma.file.findMany({
         where: { folderId: folders[0].id },
+        orderBy: { createdAt: "asc" },
       });
-    }
 
-    res.render("home", {
-      folders: folders,
-      files: files,
-    });
+      return res.redirect(`home/${folders[0].name}/${folders[0].id}`);
+    } else {
+      res.render("/home");
+    }
   } catch (err) {
     res.send(`controller error @ renderHome - msg: ${err.message}`);
   }

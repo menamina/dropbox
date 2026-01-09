@@ -28,6 +28,7 @@ model User {
 model Folder {
   id Int @id @default(autoincrement())
   name String
+  createdAt DateTime @default(now())
 
   userId Int
   user User @relation(fields: [userId], references: [id])
@@ -37,10 +38,11 @@ model Folder {
 model File {
   id Int @id @default(autoincrement())
   name String
+  createdAt DateTime @default(now())
 
   folderId Int 
   folder Folder @relation(fields: [folderId], references:[id])
   
-  user User @relation(fields: [userId], references: [id])
   userId Int
+  user User @relation(fields: [userId], references: [id])
 }
