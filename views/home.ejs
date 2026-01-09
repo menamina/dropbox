@@ -33,20 +33,38 @@
           </div>
           <div class="options hidden">
             <div>
-              <div><a href="/home/:folder/:file">open</a></div>
-              <div>download</div>
-              <div>edit</div>
+              <div><a class="linkTo" href="">open</a></div>
+              <div class="download">download</div>
               <div>
-                <form action="/delete" method="POST">
-                  <button type="submit">delete</button>
+                <div class="edit">edit</div>
+                <div class="editForm hidden">
+                  <form action="/updateFileName" method="POST">
+                    <label>name:</label>
+                    <input name="name" class="editFileName" >
+                    <input hidden name="fileID" class="editFileNameId" >
+                    <button type="submit">update</button>
+                    <div>cancel</div>
+                  </form>
+                </div>
+              <div>
+                <form action="/deleteFile" method="POST">
+                  <input class="deleteFileName" hidden name="fileName" >
+                  <input class="deleteFileID" hidden name="fileID" >
+                  <button type="submit" class="delete">delete
+                    </button>
                 </form>
               </div>
-              <div>x</div>
+              <div class="x" onclick="closeOptions()">x</div>
             </div>
           </div>
           <div class="fileHolder">
             <% if (files) { %> <% files.forEach((file) => { %>
-            <div class="file" id="<%file.id%>">
+            <div
+              class="file"
+              data-file-id="<%file.ID%>"
+              data-fileName="<%= file.name %>"
+              onclick="openOptions(e)"
+            >
               <div>preview if possible?</div>
               <div><%= file.name %></div>
             </div>
@@ -64,11 +82,38 @@
       });
     }
 
-    function openOptions() {
-      const file = document.querySelector(".file");
-      const optionsDiv = document.querySelector(".options");
-      file.addEventListener(click, (e) => {});
+    function openOptions(e) {
       optionsDiv.classList.remove("hidden");
+
+      const fileID = e.target.dataset.fileID;
+      const fileName = e.target.dataset.fileName;
+
+      const open = document.querySelector(".linkTo");
+      const download = document.querySelector(".download");
+
+      const edit = document.querySelector(".linkTo");
+      edit.addEventListener("click", (e) => {
+        const editForm = document.querySelector(".editForm");
+        editForm.classList.remove("hidden");
+        const editFileName = document.querySelector(".editFileName")
+        editFileName.value = fileName;
+        const editFileNameID = document.querySelector(".editFileNameId");
+        editFileNameID.value = fileID;
+      });
+
+      const deleteBtn = document.querySelector(".delete");
+      deleteBtn.addEventListener("click", (e) => {
+        const deleteFileName = document.querySelector(".deleteFileName");
+        const deleteFileID = document.querySelector(".deleteFileID");
+        deleteFileName.value = fileName;
+        deleteFileID.value = fileID;
+      })
+
+    }
+
+    function closeOptions() {
+      const search = document.querySelector(".searchBar");
+      search.classList.add("hidden");
     }
   </script>
 </html>
