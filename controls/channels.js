@@ -83,10 +83,67 @@ async function renderHome(req, res) {
 
       return res.redirect(`home/${folders[0].name}/${folders[0].id}`);
     } else {
-      res.render("/home");
+      res.render("/home", {
+        folders: [],
+        currentFolder: null,
+        files: [],
+      });
     }
   } catch (err) {
     res.send(`controller error @ renderHome - msg: ${err.message}`);
+  }
+}
+
+async function fullHomePage(req, res) {
+  if (!req.isAuthenticated()) {
+    return res.redirect("/login");
+  }
+
+  try {
+    if (!req.isAuthenticated()) {
+      return res.redirect("/login");
+    }
+    let files = [];
+    const folders = await prisma.folder.findMany({
+      where: { userId: req.user.id },
+      orderBy: { createdAt: "asc" },
+    });
+
+    const { folderName, folderID } = req.params;
+
+    const isFolder = await prisma.folder.findUnique({
+      where: { id: folderID },
+    });
+
+    const currentFiles = await prisma.file.findMany({
+      where: { folderId: folderID },
+    });
+
+    if (!currentFiles) {
+      res.render("fullHomePage", {
+        folders: folders,
+        currentFolder: folderName,
+        files: [],
+      });
+    }
+
+    if (!isFolder) {
+      res.render("fullHomePage", {
+        folders: folders,
+        currentFolder: [],
+        files: currentFiles,
+      });
+    }
+
+    files = currentFiles;
+
+    res.render("fullHomePage", {
+      folders: folders,
+      currentFolder: folderName,
+      files: currentFiles,
+    });
+  } catch (err) {
+    res.send(`controller error @ fullHomePage - msg: ${err.message}`);
   }
 }
 
@@ -95,4 +152,5 @@ module.exports = {
   getSignUp,
   authSignUp,
   renderHome,
+  fullHomePage,
 };

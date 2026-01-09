@@ -29,10 +29,11 @@ router.post("/", (req, res, next) => {
 
 router.get("/home", remote.renderHome);
 
-router.get("/home/:folderName/:folderID");
+router.get("/home/:folderName/:folderID", remote.fullHomePage);
 router.get("/home/:folderName/:folderID/:fileName/:fileID");
 router.get("/home/view-all-folders");
 
+router.post("/");
 router.post("/updateFileName", router.postUpdatedFileName);
 router.post("/deleteFile", remote.postDelete);
 
