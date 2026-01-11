@@ -124,26 +124,74 @@ async function fullHomePage(req, res) {
 
 async function postUpdatedFileName(req, res) {
   try {
-  } catch (error) {}
-  res.send(`controller error @ postUpdatedFileName - msg: ${err.message}`);
+    const { folderID, fileID } = req.params;
+    const { newFileName } = req.body;
+    const findFile = await prisma.file.findUnique({
+      where: { id: fileID, userId: req.user.id },
+    });
+
+    if (findFile) {
+      await prisma.file.update({
+        where: { id: fileID, userId: req.user.id },
+        data: {
+          name: newFileName,
+        },
+      });
+      return res.redirect(`/home/${folderID}`);
+    }
+  } catch (error) {
+    res.send(`controller error @ postUpdatedFileName - msg: ${err.message}`);
+  }
 }
 
 async function postDeleteFile(req, res) {
   try {
-  } catch (error) {}
-  res.send(`controller error @ postDeleteFile - msg: ${err.message}`);
+    const { folderID, fileID } = req.params;
+    const fileToDelete = await prisma.file.delete({
+      where: { id: fileID, userId: req.user.id },
+    });
+    if (fileToDelete) {
+      return res.redirect(`/home/${folderID}`);
+    }
+  } catch (error) {
+    res.send(`controller error @ postDeleteFile - msg: ${err.message}`);
+  }
 }
 
 async function postUpdateFolder(req, res) {
   try {
-  } catch (error) {}
-  res.send(`controller error @ postUpdateFolder - msg: ${err.message}`);
+    const { folderID } = req.params;
+    const foundFolder = await prisma.folder.findUnique({
+      where: { id: folderID, userId: req.user.id },
+    });
+    if (foundFolder) {
+      const { newFolderName } = req.body;
+      await prisma.folder.update({
+        where: { id: folderID, userId: req.user.id },
+        data: {
+          name: newFolderName,
+        },
+      });
+      res.redirect(`/home/${folderID}`);
+    }
+  } catch (error) {
+    res.send(`controller error @ postUpdateFolder - msg: ${err.message}`);
+  }
 }
 
 async function postDeleteFolder(req, res) {
   try {
-  } catch (error) {}
-  res.send(`controller error @ postDeleteFolder - msg: ${err.message}`);
+    const { folderID } = req.params;
+    const tryToDeleteFolder = await prisma.folder.delete({
+      where: { id: folderID, userId: req.user.id },
+    });
+
+    if (tryToDeleteFolder) {
+      return res.redirect(`home/${folderID}`);
+    }
+  } catch (error) {
+    res.send(`controller error @ postDeleteFolder - msg: ${err.message}`);
+  }
 }
 
 module.exports = {
