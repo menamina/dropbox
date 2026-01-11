@@ -27,8 +27,22 @@ form {
   align-items: center;
 }
 
-.container {
+.container,
+form {
   gap: 20px;
+}
+
+.emailInput {
+  width: 100%;
+}
+
+.login,
+.register {
+  text-align: center;
+}
+
+a:visited {
+  color: black;
 }
 
 /* ^ flex ^ */

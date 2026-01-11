@@ -13,6 +13,7 @@ function getSignUp(req, res) {
     usernameTaken: null,
     emailInUse: null,
     passwordMisMatch: null,
+    errors: null,
   });
 }
 
@@ -43,6 +44,7 @@ async function authSignUp(req, res) {
         usernameTaken: `username is taken`,
         emailInUse: null,
         passwordMisMatch: null,
+        errors: null,
       });
     }
     if (emailInUse) {
@@ -50,6 +52,7 @@ async function authSignUp(req, res) {
         emailInUse: `email is in use`,
         usernameTaken: null,
         passwordMisMatch: null,
+        errors: null,
       });
     }
     if (!samePass) {
@@ -57,6 +60,7 @@ async function authSignUp(req, res) {
         usernameTaken: null,
         emailInUse: null,
         passwordMisMatch: `passwords are not the same`,
+        errors: null,
       });
     }
   } catch (err) {

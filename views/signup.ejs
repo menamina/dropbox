@@ -7,10 +7,17 @@
       <div class="container">
         <h1>sign up</h1>
 
-        <form class="signupForm" action="/" method="POST">
+        <form class="signupForm" action="/sign-up" method="POST">
+          <% if (errors && errors.length > 0) { %>
+          <div class="error-list">
+            <% errors.forEach(err => { %>
+            <p><%= err.msg %></p>
+            <% }) %>
           <div>
-            <% if usernameTaken { %>
-            <p><%=usernameTaken%></p>
+          <% } %>
+          <div>
+            <% if (usernameTaken) { %>
+            <p><%= usernameTaken %></p>
             <% } %>
           </div>
           <div>
@@ -20,13 +27,21 @@
             <input name="username" type="text" placeholder="Username" />
           </div>
 
-          <div>
+          <div class="emailInput">
             <label for="email" hidden></label>
-            <% if emailInUse { %>
+            <% if (emailInUse) { %>
             <p><%=emailInUse%></p>
             <% } %>
-            <input name="email" type="email" placeholder="Email" />
-            <% if passwordMisMatch { %>
+            <input
+              class="emailInput"
+              name="email"
+              type="email"
+              placeholder="Email"
+            />
+          </div>
+
+          <div>
+            <% if (passwordMisMatch) { %>
             <p><%= passwordMisMatch %></p>
             <% } %>
             <label for="password" hidden></label>
@@ -38,11 +53,15 @@
               placeholder="Confirm Password"
             />
           </div>
+
+          <div>
+            <button>sign up</button>
+          </div>
         </form>
 
-        <div class="register">
+        <div class="login">
           <div>already have an account?</div>
-          <a href="/login">login</a>
+          <a href="/">login</a>
         </div>
       </div>
     </div>
