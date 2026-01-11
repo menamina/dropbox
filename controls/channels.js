@@ -77,9 +77,11 @@ async function renderHome(req, res) {
 
     if (folders.length === 0) {
       return res.render("home", {
+        view: "empty",
         folders: [],
         currentFolder: [],
         files: [],
+        file: null,
         emptyMessage: "No folders yet. Create one to get started.",
       });
     } else {
@@ -104,9 +106,11 @@ async function fullHomePage(req, res) {
 
     if (!currentFolder) {
       return res.redirect("/home", {
+        view: "empty",
         folders: folders,
         currentFolder: null,
         files: [],
+        file: null,
         emptyMessage: "The folder you are looking for does not exist.",
       });
     } else {
@@ -115,9 +119,11 @@ async function fullHomePage(req, res) {
       });
 
       return res.render("fullHomePage", {
+        view: "folder",
         folders: folders,
         currentFolder: currentFolder,
         files: currentFiles,
+        file: null,
         emptyMessage: null,
       });
     }
@@ -203,14 +209,39 @@ async function viewAllFolders(req, res) {
     const allFolders = await prisma.folder.findMany({
       where: { userId: req.user.id },
     });
+    res.render("/home/view-all-folders", {
+      view: "all folders",
+      folders: allFolders,
+      files: [],
+      currentFolder: null,
+      emptyMessage: null,
+    });
   } catch (error) {
     res.send(`controller error @ viewAllFolders - msg: ${err.message}`);
   }
 }
 
-async function viewFile(req, res) {}
+async function viewFile(req, res) {
+  try {
+    const { folderID, fileID } = req.params;
+    const findFile = await prisma.file.findUnique({
+      where: { id: fileID, userId: req.user.id },
+    });
 
-async function addFile(req, res) {}
+    res.render(`/home/${folderID}/${fileID}`, {
+      view: "file",
+      folders: [],
+      files: [],
+      file: findFile,
+      currentFolder: null,
+      emptyMessage: null,
+    });
+  } catch (error) {
+    res.send(`controller error @ viewFile - msg: ${err.message}`);
+  }
+}
+
+// async function addFile(req, res) {}
 
 module.exports = {
   login,
@@ -224,5 +255,5 @@ module.exports = {
   postDeleteFolder,
   viewAllFolders,
   viewFile,
-  addFile,
+  // addFile,
 };
