@@ -284,6 +284,19 @@ async function getTrash(req, res) {
   }
 }
 
+async function addFolder(req, res) {
+  try {
+    const { newFolderName } = req.body;
+    const add = await prisma.folder.create({
+      data: {
+        name: newFolderName,
+      },
+    });
+  } catch (error) {
+    res.send(`controller error @ addFolder - msg: ${err.message}`);
+  }
+}
+
 // async function addFile(req, res) {}
 
 module.exports = {
