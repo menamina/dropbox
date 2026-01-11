@@ -27,6 +27,7 @@ model User {
 model Folder {
   id Int @id @default(autoincrement())
   name String
+  trashed   Boolean @default(false)
   createdAt DateTime @default(now())
 
   userId Int

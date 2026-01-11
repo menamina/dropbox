@@ -71,7 +71,7 @@ async function authSignUp(req, res) {
 async function renderHome(req, res) {
   try {
     const folders = await prisma.folder.findMany({
-      where: { userId: req.user.id },
+      where: { userId: req.user.id, trashed: false },
       orderBy: { createdAt: "asc" },
     });
 
@@ -97,7 +97,7 @@ async function renderHome(req, res) {
 async function fullHomePage(req, res) {
   try {
     const folders = await prisma.folder.findMany({
-      where: { userId: req.user.id },
+      where: { userId: req.user.id, trashed: false },
       orderBy: { createdAt: "asc" },
     });
 
@@ -177,7 +177,7 @@ async function postUpdateFolder(req, res) {
   try {
     const { folderID } = req.params;
     const foundFolder = await prisma.folder.findUnique({
-      where: { id: folderID, userId: req.user.id },
+      where: { id: folderID, userId: req.user.id, trashed: false },
     });
     if (foundFolder) {
       const { newFolderName } = req.body;
@@ -212,7 +212,7 @@ async function postDeleteFolder(req, res) {
 async function viewAllFolders(req, res) {
   try {
     const allFolders = await prisma.folder.findMany({
-      where: { userId: req.user.id },
+      where: { userId: req.user.id, trashed: false },
     });
     res.render("/home/view-all-folders", {
       view: "all folders",
@@ -252,33 +252,25 @@ async function viewFile(req, res) {
 
 async function getTrash(req, res) {
   try {
+    const folders = await prisma.folder.findMany({
+      where: { userId: req.user.id, trashed: false },
+      orderBy: { createdAt: "asc" },
+    });
+
     const trashedFiles = await prisma.file.findMany({
       where: { userId: req.user.id, trashed: true },
     });
 
-    if (trashedFiles) {
-      res.render("home", {
-        view: "trash",
-        name: req.user.name,
-        folders: [],
-        files: [],
-        file: [],
-        currentFolder: null,
-        emptyMessage: null,
-        trashedFiles: trashedFiles,
-      });
-    } else {
-      res.render("home", {
-        view: "trash",
-        name: req.user.name,
-        folders: [],
-        files: [],
-        file: [],
-        currentFolder: null,
-        emptyMessage: "Nothing to see here",
-        trashedFiles: null,
-      });
-    }
+    res.render("home", {
+      view: "trash",
+      name: req.user.name,
+      folders: folders,
+      files: [],
+      file: [],
+      currentFolder: null,
+      emptyMessage: trashedFiles.length === 0 ? "Nothing to see here" : null,
+      trashedFiles: trashedFiles,
+    });
   } catch (error) {
     res.send(`controller error @ getTrash - msg: ${err.message}`);
   }
@@ -287,16 +279,26 @@ async function getTrash(req, res) {
 async function addFolder(req, res) {
   try {
     const { newFolderName } = req.body;
-    await prisma.folder.create({
+    const folder = await prisma.folder.create({
       data: {
         name: newFolderName,
         userId: req.user.id,
       },
     });
-    return res.redirect(req.originalUrl);
+    res.status(201).json(folder);
   } catch (error) {
     res.send(`controller error @ addFolder - msg: ${err.message}`);
   }
+}
+
+async function softDeleteFile(req, res) {
+  const { fileID } = req.body;
+
+  await prisma.file.update({
+    where: { id: fileID },
+    data: { trashed: true },
+  });
+  res.sendStatus(204);
 }
 
 // async function addFile(req, res) {}
@@ -314,5 +316,6 @@ module.exports = {
   viewAllFolders,
   viewFile,
   getTrash,
+  addFolder,
   // addFile,
 };

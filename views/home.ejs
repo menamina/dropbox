@@ -11,11 +11,11 @@
           <div>logout</div>
         </div>
         <div class="newFolder">
-          <div onclick="addNewFolder()">+ new folder</div>
+          <div onclick="showAddFolderForm()">+ new folder</div>
           <div class="newFolderForm hidden">
-            <form action="/addFolder" action="POST">
-              <input placeholder="folder name" name="newFolderName">
-              <button>add</button>
+            <form id="addFolderForm">
+              <input class="newFolderInput" placeholder="folder name" name="newFolderName">
+              <button type="button" onclick="addFolder(event)">add</button>
             </form>
           </div>
           <div>
@@ -69,7 +69,7 @@
           </div>
           <div class="filesIn SelectedFolderGrid">
             <div>
-              <div>+ new file</div>
+              <div onclick="">+ new file</div>
             </div>
             <div>
               <label hidden for="searchBar"></label>
@@ -99,10 +99,7 @@
                   </form>
                 </div>
                 <div>
-                  <form action="/deleteFile" method="POST"  onsubmit="return confirm('Are you sure you want to delete this?')"></form>
-                    <input class="deleteFileID" hidden name="fileID" >
-                    <button type="submit" class="delete">delete</button>
-                  </form>
+                    <button type="button" class="delete" onclick="deleteFile()">delete</button>
                 </div>
                 <div class="x" onclick="closeOptions()">x</div>
               </div>
@@ -150,6 +147,8 @@
     </div>
   </body>
   <script>
+    let selectedFileID = null;
+
     function search() {
       const search = document.querySelector(".searchBar");
       search.addEventListener("input", (event) => {
@@ -164,6 +163,7 @@
       const fileEl = event.currentTarget;
       const fileID = fileEl.target.dataset.fileID;
       const fileName = e.target.dataset.fileName;
+      selectedFileID = fileEl.dataset.fileId;
 
       const download = document.querySelector(".download");
 
@@ -197,9 +197,48 @@
 
     }
 
-    function addNewFolder(){
+    function showAddFolderForm(){
       const newFolderShow = document.querySelector(".newFolderForm");
       newFolderShow.classList.toggle("hidden")
     }
+
+    async function addFolder() {
+    const input = document.getElementById("newFolderInput");
+    const name = input.value.trim();
+
+    if (!name) return;
+
+    try {
+      const res = await fetch("/newFolder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to create folder");
+      }
+
+      const folder = await res.json();
+
+      const folderList = document.querySelector(".allFolders");
+
+      const div = document.createElement("div");
+      div.innerHTML = `<a href="/home/${folder.id}">${folder.name}</a>`;
+
+      folderList.prepend(div);
+
+      input.value = "";
+      document
+        .querySelector(".newFolderForm")
+        .classList.add("hidden");
+
+    } catch (err) {
+      console.error(err);
+      alert("Could not create folder");
+    }
+  }
   </script>
 </html>
