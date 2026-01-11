@@ -1,0 +1,19 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.parent,
+.parent > div {
+  display: flex;
+}
+
+.parent > div {
+  flex-direction: column;
+}
+
+.parent {
+  height: 100vh;
+  width: 100vw;
+}

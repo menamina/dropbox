@@ -1,11 +1,15 @@
 <html>
   <head>
-    <link rel="stylesheet" href="" />
+    <link rel="stylesheet" href="../home.css" />
   </head>
   <body>
     <div class="parent">
       <div class="leftSide">
-        <div class="userinfo sign-out"></div>
+
+        <div class="userinfo sign-out">
+          <div><%= name %></div>
+          <div>logout</div>
+        </div>
         <div class="newFolder">
           <div onclick="addNewFolder()">+ new folder</div>
           <div class="newFolder hidden">

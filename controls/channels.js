@@ -78,6 +78,7 @@ async function renderHome(req, res) {
     if (folders.length === 0) {
       return res.render("home", {
         view: "empty",
+        name: req.user.name,
         folders: [],
         currentFolder: [],
         files: [],
@@ -107,6 +108,7 @@ async function fullHomePage(req, res) {
     if (!currentFolder) {
       return res.redirect("/home", {
         view: "empty",
+        name: req.user.name,
         folders: folders,
         currentFolder: null,
         files: [],
@@ -120,6 +122,7 @@ async function fullHomePage(req, res) {
 
       return res.render("fullHomePage", {
         view: "folder",
+        name: req.user.name,
         folders: folders,
         currentFolder: currentFolder,
         files: currentFiles,
@@ -211,6 +214,7 @@ async function viewAllFolders(req, res) {
     });
     res.render("/home/view-all-folders", {
       view: "all folders",
+      name: req.user.name,
       folders: allFolders,
       files: [],
       currentFolder: null,
@@ -230,6 +234,7 @@ async function viewFile(req, res) {
 
     res.render(`/home/${folderID}/${fileID}`, {
       view: "file",
+      name: req.user.name,
       folders: [],
       files: [],
       file: findFile,
