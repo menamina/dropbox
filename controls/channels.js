@@ -287,11 +287,13 @@ async function getTrash(req, res) {
 async function addFolder(req, res) {
   try {
     const { newFolderName } = req.body;
-    const add = await prisma.folder.create({
+    await prisma.folder.create({
       data: {
         name: newFolderName,
+        userId: req.user.id,
       },
     });
+    return res.redirect(req.originalUrl);
   } catch (error) {
     res.send(`controller error @ addFolder - msg: ${err.message}`);
   }
