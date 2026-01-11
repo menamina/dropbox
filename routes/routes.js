@@ -31,12 +31,11 @@ router.post("/", (req, res, next) => {
 router.get("/home", requireAuth, remote.renderHome);
 
 router.get("/home/:folderID", requireAuth, remote.fullHomePage);
-router.get("/home//:folderID/:fileID", requireAuth);
+router.get("/home/:folderID/:fileID", requireAuth);
 router.get("/home/view-all-folders", requireAuth);
 
-router.post("/");
 router.post("/updateFileName", requireAuth, router.postUpdatedFileName);
-router.post("/deleteFile", requireAuth, remote.postDelete);
+router.post("/deleteFile", requireAuth, remote.postDeleteFile);
 
 router.post("/updateFolder", requireAuth, remote.postUpdateFolder);
 router.post("/deleteFolder", requireAuth, remote.postDeleteFolder);

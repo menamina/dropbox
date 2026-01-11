@@ -99,7 +99,7 @@ async function fullHomePage(req, res) {
     });
 
     if (!currentFolder) {
-      return res.redirect("/home" {
+      return res.redirect("/home", {
         folders: folders,
         currentFolder: null,
         files: [],
@@ -122,10 +122,38 @@ async function fullHomePage(req, res) {
   }
 }
 
+async function postUpdatedFileName(req, res) {
+  try {
+  } catch (error) {}
+  res.send(`controller error @ postUpdatedFileName - msg: ${err.message}`);
+}
+
+async function postDeleteFile(req, res) {
+  try {
+  } catch (error) {}
+  res.send(`controller error @ postDeleteFile - msg: ${err.message}`);
+}
+
+async function postUpdateFolder(req, res) {
+  try {
+  } catch (error) {}
+  res.send(`controller error @ postUpdateFolder - msg: ${err.message}`);
+}
+
+async function postDeleteFolder(req, res) {
+  try {
+  } catch (error) {}
+  res.send(`controller error @ postDeleteFolder - msg: ${err.message}`);
+}
+
 module.exports = {
   login,
   getSignUp,
   authSignUp,
   renderHome,
   fullHomePage,
+  postUpdatedFileName,
+  postDeleteFile,
+  postUpdateFolder,
+  postDeleteFolder,
 };
