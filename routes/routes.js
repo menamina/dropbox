@@ -34,7 +34,7 @@ router.get("/home/:folderID", requireAuth, remote.fullHomePage);
 router.get("/home/:folderID/:fileID", requireAuth);
 router.get("/home/view-all-folders", requireAuth);
 
-router.post("/updateFileName", requireAuth, router.postUpdatedFileName);
+router.post("/updateFileName", requireAuth, remote.postUpdatedFileName);
 router.post("/deleteFile", requireAuth, remote.postDeleteFile);
 
 router.post("/updateFolder", requireAuth, remote.postUpdateFolder);
