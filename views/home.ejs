@@ -24,7 +24,7 @@
           <% if (folders && folders.length > 0) { %> <% folders.slice(0,
           10).forEach(folder => { %>
           <div class="<%folder.name%>" data-folder-id="<%= folder.id %>">
-            <a href="/home/<%=folder.name%>/<%=folder.id%>"><%= folder.name %></a>
+            <a href="/home/<%=folder.id%>"><%= folder.name %></a>
           </div>
           <% }) %> <% } %>
         </div>
@@ -36,62 +36,92 @@
       </div>
 
       <div class="rightSide">
-        <div class="folderName">
-          <div class="enteredFolder"><%=currentFolder.name%></div>
-        </div>
-        <div class="filesIn SelectedFolderGrid">
-          <div>
-            <div>+ new file</div>
+          <% if (view === "empty") { %>
+            <div><%= emptyMessage %></div>
+         <% } %>
+
+        <% if (view === "folder") { %>
+          <div class="folderName">
+            <div class="enteredFolder"><%=currentFolder.name%></div>
           </div>
-          <div>
-            <label hidden for="searchBar"></label>
-            <input class="searchBar" name="searchBar" placeholder="search" />
-          </div>
-          <div class="options hidden">
+          <div class="filesIn SelectedFolderGrid">
             <div>
-              <div><a class="linkTo">open</a></div>
-              <div class="download">download</div>
-              <div class="edit">edit</div>
-              <div class="editForm hidden">
-                <form action="/updateFileName" method="POST">
-                    <label>name:</label>
-                    <input name="name" class="editFileName" >
-                    <input hidden name="fileID" class="editFileNameId" >
-                    <button type="submit">update</button>
-                    <div>cancel</div>
-                </form>
-              </div>
-              <div onclick="moveTo(e)">move to</div>
-              <div class="moveTo hidden">
-                <form>
-                  <label>from:</label>
-                  <input>
-                  <label>to:</label>
-                  <input>
-                </form>
-              </div>
+              <div>+ new file</div>
+            </div>
+            <div>
+              <label hidden for="searchBar"></label>
+              <input class="searchBar" name="searchBar" placeholder="search" />
+            </div>
+            <div class="options hidden">
               <div>
-                <form action="/deleteFile" method="POST"  onsubmit="return confirm('Are you sure you want to delete this?')"></form>
-                  <input class="deleteFileID" hidden name="fileID" >
-                  <button type="submit" class="delete">delete</button>
-                </form>
+                <div><a class="linkTo">open</a></div>
+                <div class="download">download</div>
+                <div class="edit">edit</div>
+                <div class="editForm hidden">
+                  <form action="/updateFileName" method="POST">
+                      <label>name:</label>
+                      <input name="name" class="editFileName" >
+                      <input hidden name="fileID" class="editFileNameId" >
+                      <button type="submit">update</button>
+                      <div>cancel</div>
+                  </form>
+                </div>
+                <div onclick="moveTo(e)">move to</div>
+                <div class="moveTo hidden">
+                  <form>
+                    <label>from:</label>
+                    <input>
+                    <label>to:</label>
+                    <input>
+                  </form>
+                </div>
+                <div>
+                  <form action="/deleteFile" method="POST"  onsubmit="return confirm('Are you sure you want to delete this?')"></form>
+                    <input class="deleteFileID" hidden name="fileID" >
+                    <button type="submit" class="delete">delete</button>
+                  </form>
+                </div>
+                <div class="x" onclick="closeOptions()">x</div>
               </div>
-              <div class="x" onclick="closeOptions()">x</div>
             </div>
-          </div>
-          <div class="fileHolder">
-            <% if (files) { %> <% files.forEach((file) => { %>
-            <div
-              class="file"
-              data-file-id="<%file.ID%>"
-              data-fileName="<%= file.name %>"
-              onclick="openOptions(e)"
-            >
-              <div>preview if possible?</div>
-              <div><%= file.name %></div>
+            <div class="fileHolder">
+              <% if (files) { %> 
+              <% files.forEach((file) => { %>
+              <div
+                class="file"
+                data-file-id="<%file.ID%>"
+                data-fileName="<%= file.name %>"
+                onclick="openOptions(e)"
+              >
+                <div>preview if possible?</div>
+                <div><%= file.name %></div>
+              </div>
+              <% }) %> <% } %>
             </div>
-            <% }) %> <% } %>
+         <% } %>
+
+           <% if (view === "all folders") { %>
+          <div>All folders</div>
+
+          <div class="folderGrid">
+            <% folders.forEach(folder => { %>
+              <div class="folderCard">
+                <a href="/home/<%= folder.id %>"><%= folder.name %></a>
+              </div>
+            <% }) %>
           </div>
+        <% } %>
+
+        <% if (view === "file") { %>
+          <div class="fileHeader">
+            <div><%= file.name %></div>
+          </div>
+
+          <div class="fileViewer">
+            <p>File preview goes here</p>
+          </div>
+        <% } %>
+      
         </div>
       </div>
     </div>

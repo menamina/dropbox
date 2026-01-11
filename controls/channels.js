@@ -78,7 +78,7 @@ async function renderHome(req, res) {
     if (folders.length === 0) {
       return res.render("home", {
         folders: [],
-        currentFolder: null,
+        currentFolder: [],
         files: [],
         emptyMessage: "No folders yet. Create one to get started.",
       });
@@ -198,6 +198,20 @@ async function postDeleteFolder(req, res) {
   }
 }
 
+async function viewAllFolders(req, res) {
+  try {
+    const allFolders = await prisma.folder.findMany({
+      where: { userId: req.user.id },
+    });
+  } catch (error) {
+    res.send(`controller error @ viewAllFolders - msg: ${err.message}`);
+  }
+}
+
+async function viewFile(req, res) {}
+
+async function addFile(req, res) {}
+
 module.exports = {
   login,
   getSignUp,
@@ -208,4 +222,7 @@ module.exports = {
   postDeleteFile,
   postUpdateFolder,
   postDeleteFolder,
+  viewAllFolders,
+  viewFile,
+  addFile,
 };

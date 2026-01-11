@@ -31,8 +31,8 @@ router.post("/", (req, res, next) => {
 router.get("/home", requireAuth, remote.renderHome);
 
 router.get("/home/:folderID", requireAuth, remote.fullHomePage);
-router.get("/home/:folderID/:fileID", requireAuth);
-router.get("/home/view-all-folders", requireAuth);
+router.get("/home/:folderID/:fileID", requireAuth, remote.viewFile);
+router.get("/home/view-all-folders", requireAuth, remote.viewAllFolders);
 
 router.post("/updateFileName", requireAuth, remote.postUpdatedFileName);
 router.post("/deleteFile", requireAuth, remote.postDeleteFile);
