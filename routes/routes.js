@@ -34,10 +34,14 @@ router.get("/home/:folderID", requireAuth, remote.fullHomePage);
 router.get("/home/:folderID/:fileID", requireAuth, remote.viewFile);
 router.get("/home/view-all-folders", requireAuth, remote.viewAllFolders);
 
+router.post("/addFolder", requireAuth, remote.addFolder);
+
 router.post("/updateFileName", requireAuth, remote.postUpdatedFileName);
 router.post("/deleteFile", requireAuth, remote.postDeleteFile);
 
 router.post("/updateFolder", requireAuth, remote.postUpdateFolder);
 router.post("/deleteFolder", requireAuth, remote.postDeleteFolder);
+
+router.get("/home/trash", requireAuth, remote.getTrash);
 
 module.exports = router;

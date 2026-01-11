@@ -84,6 +84,7 @@ async function renderHome(req, res) {
         files: [],
         file: null,
         emptyMessage: "No folders yet. Create one to get started.",
+        trashedFiles: null,
       });
     } else {
       return res.redirect(`/home/${folders[0].id}`);
@@ -95,25 +96,25 @@ async function renderHome(req, res) {
 
 async function fullHomePage(req, res) {
   try {
-    const { folderID } = req.params;
     const folders = await prisma.folder.findMany({
       where: { userId: req.user.id },
       orderBy: { createdAt: "asc" },
     });
 
     const currentFolder = await prisma.folder.findFirst({
-      where: { id: folderID, userId: req.user.id },
+      where: { userId: req.user.id },
     });
 
     if (!currentFolder) {
-      return res.redirect("/home", {
+      return res.render("home", {
         view: "empty",
         name: req.user.name,
         folders: folders,
         currentFolder: null,
         files: [],
         file: null,
-        emptyMessage: "The folder you are looking for does not exist.",
+        emptyMessage: "No folder(s) found.",
+        trashedFiles: null,
       });
     } else {
       const currentFiles = await prisma.file.findMany({
@@ -128,6 +129,7 @@ async function fullHomePage(req, res) {
         files: currentFiles,
         file: null,
         emptyMessage: null,
+        trashedFiles: null,
       });
     }
   } catch (err) {
@@ -219,6 +221,7 @@ async function viewAllFolders(req, res) {
       files: [],
       currentFolder: null,
       emptyMessage: null,
+      trashedFiles: null,
     });
   } catch (error) {
     res.send(`controller error @ viewAllFolders - msg: ${err.message}`);
@@ -240,9 +243,44 @@ async function viewFile(req, res) {
       file: findFile,
       currentFolder: null,
       emptyMessage: null,
+      trashedFiles: null,
     });
   } catch (error) {
     res.send(`controller error @ viewFile - msg: ${err.message}`);
+  }
+}
+
+async function getTrash(req, res) {
+  try {
+    const trashedFiles = await prisma.file.findMany({
+      where: { userId: req.user.id, trashed: true },
+    });
+
+    if (trashedFiles) {
+      res.render("home", {
+        view: "trash",
+        name: req.user.name,
+        folders: [],
+        files: [],
+        file: [],
+        currentFolder: null,
+        emptyMessage: null,
+        trashedFiles: trashedFiles,
+      });
+    } else {
+      res.render("home", {
+        view: "trash",
+        name: req.user.name,
+        folders: [],
+        files: [],
+        file: [],
+        currentFolder: null,
+        emptyMessage: "Nothing to see here",
+        trashedFiles: null,
+      });
+    }
+  } catch (error) {
+    res.send(`controller error @ getTrash - msg: ${err.message}`);
   }
 }
 
@@ -260,5 +298,6 @@ module.exports = {
   postDeleteFolder,
   viewAllFolders,
   viewFile,
+  getTrash,
   // addFile,
 };

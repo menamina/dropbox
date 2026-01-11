@@ -38,6 +38,7 @@ model File {
   id Int @id @default(autoincrement())
   name String
   createdAt DateTime @default(now())
+  trashed Boolean @default(false)
 
   folderId Int 
   folder Folder @relation(fields: [folderId], references:[id])

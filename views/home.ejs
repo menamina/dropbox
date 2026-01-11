@@ -12,8 +12,8 @@
         </div>
         <div class="newFolder">
           <div onclick="addNewFolder()">+ new folder</div>
-          <div class="newFolder hidden">
-            <form>
+          <div class="newFolderForm hidden">
+            <form action="/addFolder" action="POST">
               <input placeholder="folder name">
               <button>add</button>
             </form>
@@ -35,7 +35,7 @@
         <div class="viewAll"><a href="/home/view-all-folders">view all folders</a></div>
         <div class="trash">
           <img class="trash icon" />
-          <a href="/trash">trash</a>
+          <a href="/home/trash">trash</a>
         </div>
       </div>
 
@@ -43,6 +43,25 @@
           <% if (view === "empty") { %>
             <div><%= emptyMessage %></div>
          <% } %>
+
+         <% if (view === "trash") { %>
+          <div> Trash </div>
+          <div>
+            <% if (!trashedFiles) { %>
+              <div><%= emptyMessage %></div>
+            <% } else { %>
+              <% trashedFiles.forEach((file) => { %>
+                <div>
+                  <div><%= file.name %></div>
+                  <div>
+                    <div>restore</div>
+                    <div>delete</div> 
+                  </div>
+                </div>
+              <% }) %>
+            <% } %>
+
+        <% } %>
 
         <% if (view === "folder") { %>
           <div class="folderName">
@@ -70,7 +89,7 @@
                       <div>cancel</div>
                   </form>
                 </div>
-                <div onclick="moveTo(e)">move to</div>
+                <div onclick="moveTo(event)">move to</div>
                 <div class="moveTo hidden">
                   <form>
                     <label>from:</label>
@@ -93,9 +112,9 @@
               <% files.forEach((file) => { %>
               <div
                 class="file"
-                data-file-id="<%file.ID%>"
+                data-file-id="<%= file.ID%>"
                 data-fileName="<%= file.name %>"
-                onclick="openOptions(e)"
+                onclick="openOptions(event)"
               >
                 <div>preview if possible?</div>
                 <div><%= file.name %></div>
@@ -133,15 +152,17 @@
   <script>
     function search() {
       const search = document.querySelector(".searchBar");
-      search.addEventListener("input", (e) => {
+      search.addEventListener("input", (event) => {
         const query = e.target.value;
       });
     }
 
-    function openOptions(e) {
+    function openOptions(event) {
+      const optionsDiv = document.querySelector(".options");
       optionsDiv.classList.remove("hidden");
 
-      const fileID = e.target.dataset.fileID;
+      const fileEl = event.currentTarget;
+      const fileID = fileEl.target.dataset.fileID;
       const fileName = e.target.dataset.fileName;
 
       const download = document.querySelector(".download");
@@ -150,7 +171,7 @@
       openLink.href = `/home/${folderID}/${fileName}`;
 
       const edit = document.querySelector(".linkTo");
-      edit.addEventListener("click", (e) => {
+      edit.addEventListener("click", (event) => {
         const editForm = document.querySelector(".editForm");
         editForm.classList.remove("hidden");
         const editFileName = document.querySelector(".editFileName")
@@ -160,7 +181,7 @@
       });
 
       const deleteBtn = document.querySelector(".delete");
-      deleteBtn.addEventListener("click", (e) => {
+      deleteBtn.addEventListener("click", (event) => {
         const deleteFileID = document.querySelector(".deleteFileID");
         deleteFileID.value = fileID;
       })
@@ -172,13 +193,13 @@
       search.classList.add("hidden");
     }
 
-    function moveTo(e){
+    function moveTo(event){
 
     }
 
     function addNewFolder(){
-      const newFolderShow = document.querySelector(".newFolder");
-      newFolderShow.classList.remove("hidden")
+      const newFolderShow = document.querySelector(".newFolderForm");
+      newFolderShow.classList.toggle("hidden")
     }
   </script>
 </html>
