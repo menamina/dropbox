@@ -5,7 +5,6 @@
   <body>
     <div class="parent">
       <div class="leftSide">
-
         <div class="userinfo sign-out">
           <div><%= name %></div>
           <div>logout</div>
@@ -14,7 +13,11 @@
           <div onclick="showAddFolderForm()">+ new folder</div>
           <div class="newFolderForm hidden">
             <form id="addFolderForm">
-              <input class="newFolderInput" placeholder="folder name" name="newFolderName">
+              <input
+                class="newFolderInput"
+                placeholder="folder name"
+                name="newFolderName"
+              />
               <button type="button" onclick="addFolder(event)">add</button>
             </form>
           </div>
@@ -27,7 +30,9 @@
           </div>
           <% }) %> <% } %>
         </div>
-        <div class="viewAll"><a href="/home/view-all-folders">view all folders</a></div>
+        <div class="viewAll">
+          <a href="/home/view-all-folders">view all folders</a>
+        </div>
         <div class="trash">
           <img class="trash icon" />
           <a href="/home/trash">trash</a>
@@ -35,263 +40,263 @@
       </div>
 
       <div class="rightSide">
-          <% if (view === "empty") { %>
-            <div><%= emptyMessage %></div>
-         <% } %>
-
-         <% if (view === "trash") { %>
-          <div> Trash </div>
+        <% if (view === "empty") { %>
+        <div><%= emptyMessage %></div>
+        <% } %> <% if (view === "trash") { %>
+        <div>Trash</div>
+        <div>
+          <% const noTrashedFiles = !trashedFiles || trashedFiles.length === 0;
+          %> <% const noTrashedFolders = !trashedFolders ||
+          trashedFolders.length === 0; %> <% if (noTrashedFiles &&
+          noTrashedFolders) { %>
+          <div><%= emptyMessage %></div>
+          <% } else { %>
           <div>
-            <% if (!trashedFiles && !trashedFolders) { %>
-              <div><%= emptyMessage %></div>
-            <% } else { %>
+            <div>Files</div>
+            <% if (noTrashedFiles) { %>
+            <div></div>
+            <% } else { %> <% trashedFiles.forEach((file) => { %>
+            <div>
+              <div><%= file.name %></div>
               <div>
-                <div>Files</div>
-                <% if (!trashedFiles) {
-                  <div></div>
-                } else {
-              <% trashedFiles.forEach((file) => { %>
                 <div>
-                  <div><%= file.name %></div>
-                  <div>
-                    <div>
-                      <form action="/restoreFile" action="POST">
-                        <input hidden name="restoreThisFile" value="<%=file.id%>">
-                        <button>restore</button>
-                      </form>
-                    </div>
-                    <div>
-                      <form action="/deleteFile" action="POST">
-                         <input hidden name="deleteThisFile" value="<%=file.id%>">
-                        <button>delete forever</button>
-                      </form>
-                    </div>
-                  </div>
+                  <form action="/restoreFile" method="POST">
+                    <input hidden name="restoreThisFile" value="<%=file.id%>" />
+                    <button>restore</button>
+                  </form>
                 </div>
-              <% }) %>
-            <% } %>
-              </div>
-              <div>
-                <div>Folders</div>
-                <% if (!trashedFolders){
-                  <div></div>
-                } else {
-                   <% trashedFolders.forEach((folder) => { %>
                 <div>
-                  <div><%= folder.name %></div>
-                  <div>
-                     <div>
-                      <form action="/restoreFolder" method="POST">
-                         <input hidden name="restoreThisFolder" value="<%=folder.id%>">
-                        <button>restore</button>
-                      </form>
-                    </div>
-                     <div>
-                      <form action="/deleteFolder" method="POST">
-                         <input hidden name="deleteThisFolder" value="<%=folder.id%>">
-                        <button>delete forever</button>
-                      </form>
-                    </div>
-                  </div>
+                  <form action="/deleteFile" method="POST">
+                    <input hidden name="deleteThisFile" value="<%=file.id%>" />
+                    <button>delete forever</button>
+                  </form>
                 </div>
-              <% }) %>
-            <% } %>
-                }
               </div>
-
-        <% } %>
-
-        <% if (view === "folder") { %>
-          <div class="folderName">
-            <div class="enteredFolder"><%=currentFolder.name%></div>
+            </div>
+            <% }) %> <% } %>
           </div>
-          <div class="filesIn SelectedFolderGrid">
+          <div>
+            <div>Folders</div>
+            <% if (noTrashedFolders) { %>
+            <div></div>
+            <% } else { %> <% trashedFolders.forEach((folder) => { %>
             <div>
-              <div onclick="">+ new file</div>
-            </div>
-            <div>
-              <label hidden for="searchBar"></label>
-              <input class="searchBar" name="searchBar" placeholder="search" />
-            </div>
-            <div class="options hidden">
+              <div><%= folder.name %></div>
               <div>
-                <div><a class="linkTo">open</a></div>
-                <div class="download">download</div>
-                <div class="edit">edit</div>
-                <div class="editForm hidden">
-                  <form action="/updateFileName" method="POST">
-                      <label>name:</label>
-                      <input name="name" class="editFileName" >
-                      <input hidden name="fileID" class="editFileNameId" >
-                      <button type="submit">update</button>
-                      <div>cancel</div>
-                  </form>
-                </div>
-                <div onclick="moveTo(event)">move to</div>
-                <div class="moveTo hidden">
-                  <form>
-                    <label>from:</label>
-                    <input>
-                    <label>to:</label>
-                    <input>
+                <div>
+                  <form action="/restoreFolder" method="POST">
+                    <input
+                      hidden
+                      name="restoreThisFolder"
+                      value="<%=folder.id%>"
+                    />
+                    <button>restore</button>
                   </form>
                 </div>
                 <div>
-                    <button type="button" class="delete" onclick="deleteFile()">delete</button>
+                  <form action="/deleteFolder" method="POST">
+                    <input
+                      hidden
+                      name="deleteThisFolder"
+                      value="<%=folder.id%>"
+                    />
+                    <button>delete forever</button>
+                  </form>
                 </div>
-                <div class="x" onclick="closeOptions()">x</div>
               </div>
             </div>
-            <div class="fileHolder">
-              <% if (files) { %> 
-              <% files.forEach((file) => { %>
-              <div
-                class="file"
-                data-file-id="<%= file.ID%>"
-                data-fileName="<%= file.name %>"
-                onclick="openOptions(event)"
-              >
-                <div>preview if possible?</div>
-                <div><%= file.name %></div>
-              </div>
-              <% }) %> <% } %>
-            </div>
-         <% } %>
-
-           <% if (view === "all folders") { %>
-          <div>All folders</div>
-
-          <div class="folderGrid">
-            <% folders.forEach(folder => { %>
-              <div class="folderCard">
-                <a href="/home/<%= folder.id %>"><%= folder.name %></a>
-                <form action="/softDeleteFolder" method="POST">
-                  <button>delete folder</button>
+            <% }) %> <% } %>
+          </div>
+          <% } %>
+        </div>
+        <% } %> <% if (view === "folder") { %>
+        <div class="folderName">
+          <div class="enteredFolder"><%=currentFolder.name%></div>
+          <div>
+            <div>edit</div>
+            <div>delete</div>
+          </div>
+        </div>
+        <div class="filesIn SelectedFolderGrid">
+          <div>
+            <div onclick="">+ new file</div>
+          </div>
+          <div>
+            <label hidden for="searchBar"></label>
+            <input class="searchBar" name="searchBar" placeholder="search" />
+          </div>
+          <div class="options hidden">
+            <div>
+              <div><a class="linkTo">open</a></div>
+              <div class="download">download</div>
+              <div class="edit">edit</div>
+              <div class="editForm hidden">
+                <form action="/updateFileName" method="POST">
+                  <label>name:</label>
+                  <input name="newFileName" class="editFileName" />
+                  <input hidden name="fileID" class="editFileNameId" />
+                  <input hidden name="folderID" value="<%= currentFolder ? currentFolder.id : '' %>" />
+                  <button type="submit">update</button>
+                  <div>cancel</div>
                 </form>
               </div>
-            <% }) %>
+              <div onclick="moveTo(event)">move to</div>
+              <div class="moveTo hidden">
+                <form>
+                  <label>from:</label>
+                  <input />
+                  <label>to:</label>
+                  <input />
+                </form>
+              </div>
+              <form class="deleteFileForm" action="/softDeleteFile" method="POST">
+                <input hidden class="deleteFileID" name="deleteThisFile" />
+                <button type="button" class="delete">
+                  delete
+                </button>
+              </form>
+              <div class="x" onclick="closeOptions()">x</div>
+            </div>
           </div>
-        <% } %>
-
-        <% if (view === "file") { %>
-          <div class="fileHeader">
-            <div><%= file.name %></div>
+          <div class="fileHolder">
+            <% if (files) { %> <% files.forEach((file) => { %>
+            <div
+              class="file"
+              data-file-id="<%= file.id%>"
+              data-file-name="<%= file.name %>"
+              onclick="openOptions(event)"
+            >
+              <div>preview if possible?</div>
+              <div><%= file.name %></div>
+            </div>
+            <% }) %> <% } %>
           </div>
-
-          <div class="fileViewer">
-            <p>File preview goes here</p>
-          </div>
-        <% } %>
-      
         </div>
+        <% } %> <% if (view === "all folders") { %>
+        <div>All folders</div>
+
+        <div class="folderGrid">
+          <% folders.forEach(folder => { %>
+          <div class="folderCard">
+            <a href="/home/<%= folder.id %>"><%= folder.name %></a>
+            <form action="/softDeleteFolder" method="POST">
+              <input hidden name="softDeleteFolder" value="<%= folder.id %>" />
+              <button>delete folder</button>
+            </form>
+          </div>
+          <% }) %>
+        </div>
+        <% } %> <% if (view === "file") { %>
+        <div class="fileHeader">
+          <div><%= file.name %></div>
+        </div>
+
+        <div class="fileViewer">
+          <p>File preview goes here</p>
+        </div>
+        <% } %>
       </div>
     </div>
-  </body>
-  <script>
-    let selectedFileID = null;
 
-    function search() {
-      const search = document.querySelector(".searchBar");
-      search.addEventListener("input", (event) => {
-        const query = e.target.value;
-      });
-    }
+    <script>
+      let selectedFileID = null;
+      const currentFolderId = <%= currentFolder ? currentFolder.id : "null" %>;
 
-    function openOptions(event) {
-      const optionsDiv = document.querySelector(".options");
-      optionsDiv.classList.remove("hidden");
-
-      const fileEl = event.currentTarget;
-      const fileID = fileEl.target.dataset.fileID;
-      const fileName = e.target.dataset.fileName;
-      selectedFileID = fileEl.dataset.fileId;
-
-      const download = document.querySelector(".download");
-
-      const openLink = document.querySelector(".linkTo");
-      openLink.href = `/home/${folderID}/${fileName}`;
-
-      const edit = document.querySelector(".linkTo");
-      edit.addEventListener("click", (event) => {
-        const editForm = document.querySelector(".editForm");
-        editForm.classList.remove("hidden");
-        const editFileName = document.querySelector(".editFileName")
-        editFileName.value = fileName;
-        const editFileNameID = document.querySelector(".editFileNameId");
-        editFileNameID.value = fileID;
-      });
-
-      const deleteBtn = document.querySelector(".delete");
-      deleteBtn.addEventListener("click", (event) => {
-        const deleteFileID = document.querySelector(".deleteFileID");
-        deleteFileID.value = fileID;
-      })
-
-    }
-
-    function closeOptions() {
-      const search = document.querySelector(".searchBar");
-      search.classList.add("hidden");
-    }
-
-    function moveTo(event){
-
-    }
-
-    function showAddFolderForm(){
-      const newFolderShow = document.querySelector(".newFolderForm");
-      newFolderShow.classList.toggle("hidden")
-    }
-
-    async function addFolder(event) {
-    event.preventDefault();
-    const input = document.querySelector(".newFolderInput");
-    const name = input.value;
-
-    if (!name) return;
-
-    try {
-      const res = await fetch("/addFolder", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ newFolderName: name }),
-      });
-
-      console.log("status:", res.status);
-      if (!res.ok) {
-        throw new Error("Failed to create folder");
-      } else {
-
-      const folder = await res.json();
-
-      const folderList = document.querySelector(".allFolders");
-
-      const foldersRendered = folderList.children;
-      if (foldersRendered.length > 10) {
-        foldersRendered[foldersRendered.length - 1].remove();
-      };
-
-      const div = document.createElement("div");
-      div.innerHTML = `<a href="/home/${folder.id}">${folder.name}</a>`;
-
-      folderList.prepend(div);
-
-      input.value = "";
-      document
-        .querySelector(".newFolderForm")
-        .classList.add("hidden");
+      function search() {
+        const search = document.querySelector(".searchBar");
+        search.addEventListener("input", (event) => {
+          const query = event.target.value;
+        });
       }
 
-    } catch (err) {
-      console.error(err);
-       alert(err.message);
-    }
-  }
+      function openOptions(event) {
+        const optionsDiv = document.querySelector(".options");
+        optionsDiv.classList.remove("hidden");
 
-  
+        const fileEl = event.currentTarget;
+        const fileID = fileEl.dataset.fileId;
+        const fileName = fileEl.dataset.fileName;
+        selectedFileID = fileID;
 
+        const download = document.querySelector(".download");
 
-  </script>
+        const openLink = document.querySelector(".linkTo");
+        if (currentFolderId) {
+          openLink.href = `/home/${currentFolderId}/${fileName}`;
+        }
+
+        const edit = document.querySelector(".edit");
+        edit.addEventListener("click", (event) => {
+          const editForm = document.querySelector(".editForm");
+          editForm.classList.remove("hidden");
+          const editFileName = document.querySelector(".editFileName");
+          editFileName.value = fileName;
+          const editFileNameID = document.querySelector(".editFileNameId");
+          editFileNameID.value = fileID;
+        });
+
+        const deleteBtn = document.querySelector(".delete");
+        deleteBtn.addEventListener("click", (event) => {
+          const deleteFileID = document.querySelector(".deleteFileID");
+          deleteFileID.value = fileID;
+          document.querySelector(".deleteFileForm").submit();
+        });
+      }
+
+      function closeOptions() {
+        const search = document.querySelector(".searchBar");
+        search.classList.add("hidden");
+      }
+
+      function moveTo(event) {}
+
+      function showAddFolderForm() {
+        const newFolderShow = document.querySelector(".newFolderForm");
+        newFolderShow.classList.toggle("hidden");
+      }
+
+      async function addFolder(event) {
+        event.preventDefault();
+        const input = document.querySelector(".newFolderInput");
+        const name = input.value;
+
+        if (!name) return;
+
+        try {
+          const res = await fetch("/addFolder", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ newFolderName: name }),
+          });
+
+          console.log("status:", res.status);
+          if (!res.ok) {
+            throw new Error("Failed to create folder");
+          } else {
+            const folder = await res.json();
+
+            const folderList = document.querySelector(".allFolders");
+
+            const foldersRendered = folderList.children;
+            if (foldersRendered.length > 10) {
+              foldersRendered[foldersRendered.length - 1].remove();
+            }
+
+            const div = document.createElement("div");
+            div.innerHTML = `<a href="/home/${folder.id}">${folder.name}</a>`;
+
+            folderList.prepend(div);
+
+            input.value = "";
+            document.querySelector(".newFolderForm").classList.add("hidden");
+          }
+        } catch (err) {
+          console.error(err);
+          alert(err.message);
+        }
+      }
+    </script>
+  </body>
 </html>

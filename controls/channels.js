@@ -142,8 +142,7 @@ async function fullHomePage(req, res) {
 
 async function postUpdatedFileName(req, res) {
   try {
-    const { folderID, fileID } = req.params;
-    const { newFileName } = req.body;
+    const { fileID, newFileName, folderID } = req.body;
     const findFile = await prisma.file.findUnique({
       where: { id: fileID, userId: req.user.id },
     });
@@ -162,38 +161,44 @@ async function postUpdatedFileName(req, res) {
   }
 }
 
-async function postDeleteFile(req, res) {
-  try {
-    const { folderID, fileID } = req.params;
-    const fileToDelete = await prisma.file.delete({
-      where: { id: fileID, userId: req.user.id },
-    });
-    if (fileToDelete) {
-      return res.redirect(`/home/trash`);
-    }
-  } catch (error) {
-    res.send(`controller error @ postDeleteFile - msg: ${err.message}`);
-  }
-}
-
 async function postUpdateFolder(req, res) {
   try {
-    const { folderID } = req.params;
+    const { folderID, newFolderName } = req.body;
     const foundFolder = await prisma.folder.findUnique({
-      where: { id: folderID, userId: req.user.id, trashed: false },
+      where: { id: Number(folderID), userId: req.user.id, trashed: false },
     });
     if (foundFolder) {
-      const { newFolderName } = req.body;
       await prisma.folder.update({
-        where: { id: folderID, userId: req.user.id },
+        where: { id: Number(folderID), userId: req.user.id },
         data: {
           name: newFolderName,
         },
       });
-      res.redirect(`/home/${folderID}`);
+      return res.redirect(`/home/${folderID}`);
     }
+    return res.redirect("/home");
   } catch (error) {
     res.send(`controller error @ postUpdateFolder - msg: ${err.message}`);
+  }
+}
+
+async function postDeleteFile(req, res) {
+  try {
+    const { deleteThisFile } = req.body;
+    const fileID = Number(deleteThisFile);
+    const file = await prisma.file.findUnique({
+      where: { id: fileID, userId: req.user.id },
+      select: { id: true, folderId: true },
+    });
+
+    if (file) {
+      await prisma.file.delete({
+        where: { id: fileID, userId: req.user.id },
+      });
+      return res.redirect(`/home/trash`);
+    }
+  } catch (error) {
+    res.send(`controller error @ postDeleteFile - msg: ${err.message}`);
   }
 }
 
@@ -297,33 +302,46 @@ async function addFolder(req, res) {
 }
 
 async function softDeleteFile(req, res) {
-  const { fileID } = req.body;
+  try {
+    const { deleteThisFile } = req.body;
+    const fileID = Number(deleteThisFile);
 
-  await prisma.file.update({
-    where: { id: fileID },
-    data: { trashed: true },
-  });
-  res.sendStatus(204);
+    const file = await prisma.file.findUnique({
+      where: { userId: req.user.id, id: fileID },
+      select: { trashed: true, folderId: true },
+    });
+
+    if (!file) return res.redirect("/home");
+
+    await prisma.file.update({
+      where: { userId: req.user.id, id: fileID },
+      data: { trashed: true },
+    });
+
+    return res.redirect(`/home/${file.folderId}`);
+  } catch (error) {
+    console.log(`Cannot move file to the trash: ${error.message}`);
+  }
 }
 
 async function softDeleteFolder(req, res) {
   try {
-    const folderID = req.params;
-    const folderIDNum = Number(folderID);
+    const { softDeleteFolder } = req.body;
+    const folderID = Number(softDeleteFolder);
 
     const folder = await prisma.folder.findUnique({
       where: { userId: req.user.id, id: folderID },
       select: { trashed: true },
     });
 
-    if (folder) {
-      await prisma.folder.update({
-        where: { userId: req.user.id, id: folderIDNum },
-        data: { trashed: !folder.trashed },
-      });
+    if (!folder) return res.redirect("/home");
 
-      res.redirect("/home");
-    }
+    await prisma.folder.update({
+      where: { userId: req.user.id, id: folderID },
+      data: { trashed: true },
+    });
+
+    return res.redirect("/home");
   } catch (error) {
     console.log(`controller error @ softDeleteFolder - msg: ${error.message}`);
   }
@@ -344,9 +362,37 @@ async function postDeleteFolder(req, res) {
   }
 }
 
-async function restoreFile(req, res) {}
+async function restoreFile(req, res) {
+  try {
+    const { restoreThisFile } = req.body;
+    const fileID = Number(restoreThisFile);
+    await prisma.file.update({
+      where: { userId: req.user.id, id: fileID },
+      data: { trashed: false },
+    });
+    res.redirect(`/home/trash`);
+  } catch (error) {
+    return res.status(500).json({
+      error: "Cannot delete file - server error",
+    });
+  }
+}
 
-async function restoreFolder(req, res) {}
+async function restoreFolder(req, res) {
+  try {
+    const { restoreThisFolder } = req.body;
+    const folderID = Number(restoreThisFolder);
+    await prisma.folder.update({
+      where: { userId: req.user.id, id: folderID },
+      data: { trashed: false },
+    });
+    res.redirect(`/home/trash`);
+  } catch (error) {
+    return res.status(500).json({
+      error: "Cannot delete folder - server error",
+    });
+  }
+}
 
 // async function addFile(req, res) {}
 
@@ -366,7 +412,6 @@ module.exports = {
   addFolder,
   softDeleteFolder,
   softDeleteFile,
-  postDeleteFolder,
   restoreFile,
   restoreFolder,
   // addFile,
