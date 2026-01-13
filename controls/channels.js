@@ -333,7 +333,7 @@ async function postDeleteFolder(req, res) {
   try {
     const { deleteThisFolder } = req.body;
     const folderID = Number(deleteThisFolder);
-    const deleteThis = await prisma.folder.delete({
+    await prisma.folder.delete({
       where: { userId: req.user.id, id: folderID },
     });
     res.redirect(`/home/trash`);
@@ -343,6 +343,10 @@ async function postDeleteFolder(req, res) {
     });
   }
 }
+
+async function restoreFile(req, res) {}
+
+async function restoreFolder(req, res) {}
 
 // async function addFile(req, res) {}
 
@@ -363,5 +367,7 @@ module.exports = {
   softDeleteFolder,
   softDeleteFile,
   postDeleteFolder,
+  restoreFile,
+  restoreFolder,
   // addFile,
 };
