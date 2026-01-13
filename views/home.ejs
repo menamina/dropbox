@@ -200,7 +200,7 @@
 
     <script>
       let selectedFileID = null;
-      const currentFolderId = <%= currentFolder ? currentFolder.id : "null" %>;
+      const currentFolderId = <%= JSON.stringify(currentFolder ? currentFolder.id : null) %>;
 
       function search() {
         const search = document.querySelector(".searchBar");

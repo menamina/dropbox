@@ -143,13 +143,14 @@ async function fullHomePage(req, res) {
 async function postUpdatedFileName(req, res) {
   try {
     const { fileID, newFileName, folderID } = req.body;
+    const fileIdNum = Number(fileID);
     const findFile = await prisma.file.findUnique({
-      where: { id: fileID, userId: req.user.id },
+      where: { id: fileIdNum, userId: req.user.id },
     });
 
     if (findFile) {
       await prisma.file.update({
-        where: { id: fileID, userId: req.user.id },
+        where: { id: fileIdNum, userId: req.user.id },
         data: {
           name: newFileName,
         },
@@ -207,7 +208,7 @@ async function viewAllFolders(req, res) {
     const allFolders = await prisma.folder.findMany({
       where: { userId: req.user.id, trashed: false },
     });
-    res.render("/home/view-all-folders", {
+    res.render("home", {
       view: "all folders",
       name: req.user.name,
       folders: allFolders,
@@ -228,7 +229,7 @@ async function viewFile(req, res) {
       where: { id: fileID, userId: req.user.id },
     });
 
-    res.render(`/home/${folderID}/${fileID}`, {
+    res.render("home", {
       view: "file",
       name: req.user.name,
       folders: [],
