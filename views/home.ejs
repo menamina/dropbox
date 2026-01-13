@@ -127,6 +127,9 @@
             <% folders.forEach(folder => { %>
               <div class="folderCard">
                 <a href="/home/<%= folder.id %>"><%= folder.name %></a>
+                <form action="/softDeleteFolder" method="POST">
+                  <button>delete folder</button>
+                </form>
               </div>
             <% }) %>
           </div>
@@ -202,9 +205,10 @@
       newFolderShow.classList.toggle("hidden")
     }
 
-    async function addFolder() {
-    const input = document.getElementById("newFolderInput");
-    const name = input.value.trim();
+    async function addFolder(event) {
+    event.preventDefault();
+    const input = document.querySelector(".newFolderInput");
+    const name = input.value;
 
     if (!name) return;
 
@@ -214,16 +218,22 @@
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ newFolderName: name }),
       });
 
+      console.log("status:", res.status);
       if (!res.ok) {
         throw new Error("Failed to create folder");
-      }
+      } else {
 
       const folder = await res.json();
 
       const folderList = document.querySelector(".allFolders");
+
+      const foldersRendered = folderList.children;
+      if (foldersRendered.length > 10) {
+        foldersRendered[foldersRendered.length - 1].remove();
+      };
 
       const div = document.createElement("div");
       div.innerHTML = `<a href="/home/${folder.id}">${folder.name}</a>`;
@@ -234,11 +244,16 @@
       document
         .querySelector(".newFolderForm")
         .classList.add("hidden");
+      }
 
     } catch (err) {
       console.error(err);
-      alert("Could not create folder");
+       alert(err.message);
     }
   }
+
+  
+
+
   </script>
 </html>

@@ -42,7 +42,7 @@ model File {
   trashed Boolean @default(false)
 
   folderId Int 
-  folder Folder @relation(fields: [folderId], references:[id])
+  folder Folder @relation(fields: [folderId], references:[id], onDelete: Cascade)
   
   userId Int
   user User @relation(fields: [userId], references: [id])

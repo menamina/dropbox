@@ -37,11 +37,15 @@ router.get("/home/view-all-folders", requireAuth, remote.viewAllFolders);
 router.post("/addFolder", requireAuth, remote.addFolder);
 
 router.post("/updateFileName", requireAuth, remote.postUpdatedFileName);
+router.post("/softDeleteFile", requireAuth, remote.postDeleteFile);
 router.post("/deleteFile", requireAuth, remote.postDeleteFile);
 
 router.post("/updateFolder", requireAuth, remote.postUpdateFolder);
+router.post("/softDelete", requireAuth, remote.softDeleteFolder);
 router.post("/deleteFolder", requireAuth, remote.postDeleteFolder);
 
 router.get("/home/trash", requireAuth, remote.getTrash);
+
+router.post("/newFolder", requireAuth, remote.addFolder);
 
 module.exports = router;

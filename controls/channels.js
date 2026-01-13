@@ -101,8 +101,11 @@ async function fullHomePage(req, res) {
       orderBy: { createdAt: "asc" },
     });
 
-    const currentFolder = await prisma.folder.findFirst({
-      where: { userId: req.user.id },
+    const { folderID } = req.params;
+    const numberParam = Number(folderID);
+
+    const currentFolder = await prisma.folder.findUnique({
+      where: { userId: req.user.id, id: numberParam },
     });
 
     if (!currentFolder) {
@@ -121,12 +124,12 @@ async function fullHomePage(req, res) {
         where: { folderId: currentFolder.id },
       });
 
-      return res.render("fullHomePage", {
+      return res.render("home", {
         view: "folder",
         name: req.user.name,
         folders: folders,
         currentFolder: currentFolder,
-        files: currentFiles,
+        files: currentFiles ? currentFiles : null,
         file: null,
         emptyMessage: null,
         trashedFiles: null,
@@ -279,15 +282,26 @@ async function getTrash(req, res) {
 async function addFolder(req, res) {
   try {
     const { newFolderName } = req.body;
-    const folder = await prisma.folder.create({
-      data: {
-        name: newFolderName,
-        userId: req.user.id,
-      },
-    });
-    res.status(201).json(folder);
+
+    if (!newFolderName) {
+      return res.status(400).json({ error: "Folder name is required" });
+    } else {
+      const folder = await prisma.folder.create({
+        data: {
+          name: newFolderName,
+          userId: req.user.id,
+        },
+      });
+
+      return res.status(201).json(folder);
+    }
   } catch (error) {
-    res.send(`controller error @ addFolder - msg: ${err.message}`);
+    console.log(`controller error @ addFolder - msg: ${error.message}`);
+
+    return res.status(500).json({
+      error: "Failed to create folder",
+      message: error.message,
+    });
   }
 }
 
@@ -299,6 +313,25 @@ async function softDeleteFile(req, res) {
     data: { trashed: true },
   });
   res.sendStatus(204);
+}
+
+async function softDeleteFolder(req, res) {
+  try {
+    const folderID = req.params;
+    const folderIDNum = Number(folderID);
+
+    const folder = await prisma.folder.findUnique({
+      where: { userId: req.user.id, id: folderID },
+      select: { trashed: true },
+    });
+
+    if (folder) {
+      await prisma.folder.update({
+        where: { userId: req.user.id, id: folderIDNum },
+        data: { trashed: !folder.trashed },
+      });
+    }
+  } catch (error) {}
 }
 
 // async function addFile(req, res) {}
@@ -317,5 +350,7 @@ module.exports = {
   viewFile,
   getTrash,
   addFolder,
+  softDeleteFolder,
+  softDeleteFile,
   // addFile,
 };
