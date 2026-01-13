@@ -40,7 +40,7 @@ router.post("/updateFileName", requireAuth, remote.postUpdatedFileName);
 router.post("/softDeleteFile", requireAuth, remote.postDeleteFile);
 router.post("/deleteFile", requireAuth, remote.postDeleteFile);
 
-router.post("/updateFolder", requireAuth, remote.postUpdateFolder);
+router.post("/updateFolderName", requireAuth, remote.postUpdateFolder);
 router.post("/softDelete", requireAuth, remote.softDeleteFolder);
 router.post("/deleteFolder", requireAuth, remote.postDeleteFolder);
 

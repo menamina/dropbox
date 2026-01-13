@@ -169,7 +169,7 @@ async function postDeleteFile(req, res) {
       where: { id: fileID, userId: req.user.id },
     });
     if (fileToDelete) {
-      return res.redirect(`/home/${folderID}`);
+      return res.redirect(`/home/trash`);
     }
   } catch (error) {
     res.send(`controller error @ postDeleteFile - msg: ${err.message}`);
@@ -194,21 +194,6 @@ async function postUpdateFolder(req, res) {
     }
   } catch (error) {
     res.send(`controller error @ postUpdateFolder - msg: ${err.message}`);
-  }
-}
-
-async function postDeleteFolder(req, res) {
-  try {
-    const { folderID } = req.params;
-    const tryToDeleteFolder = await prisma.folder.delete({
-      where: { id: folderID, userId: req.user.id },
-    });
-
-    if (tryToDeleteFolder) {
-      return res.redirect(`home/${folderID}`);
-    }
-  } catch (error) {
-    res.send(`controller error @ postDeleteFolder - msg: ${err.message}`);
   }
 }
 
@@ -264,6 +249,11 @@ async function getTrash(req, res) {
       where: { userId: req.user.id, trashed: true },
     });
 
+    const trashedFolders = await prisma.folder.findMany({
+      where: { userId: req.user.id, trashed: true },
+      orderBy: { createdAt: "asc" },
+    });
+
     res.render("home", {
       view: "trash",
       name: req.user.name,
@@ -271,8 +261,9 @@ async function getTrash(req, res) {
       files: [],
       file: [],
       currentFolder: null,
-      emptyMessage: trashedFiles.length === 0 ? "Nothing to see here" : null,
-      trashedFiles: trashedFiles,
+      emptyMessage: "Nothing to see here",
+      trashedFiles: trashedFiles.length > 0 ? trashedFiles : null,
+      trashedFolders: trashedFolders.length > 0 ? trashedFolders : null,
     });
   } catch (error) {
     res.send(`controller error @ getTrash - msg: ${err.message}`);
@@ -330,8 +321,27 @@ async function softDeleteFolder(req, res) {
         where: { userId: req.user.id, id: folderIDNum },
         data: { trashed: !folder.trashed },
       });
+
+      res.redirect("/home");
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(`controller error @ softDeleteFolder - msg: ${error.message}`);
+  }
+}
+
+async function postDeleteFolder(req, res) {
+  try {
+    const { deleteThisFolder } = req.body;
+    const folderID = Number(deleteThisFolder);
+    const deleteThis = await prisma.folder.delete({
+      where: { userId: req.user.id, id: folderID },
+    });
+    res.redirect(`/home/trash`);
+  } catch (error) {
+    return res.status(500).json({
+      error: "Cannot delete file - server error",
+    });
+  }
 }
 
 // async function addFile(req, res) {}
@@ -352,5 +362,6 @@ module.exports = {
   addFolder,
   softDeleteFolder,
   softDeleteFile,
+  postDeleteFolder,
   // addFile,
 };

@@ -47,19 +47,62 @@
          <% if (view === "trash") { %>
           <div> Trash </div>
           <div>
-            <% if (!trashedFiles) { %>
+            <% if (!trashedFiles && !trashedFolders) { %>
               <div><%= emptyMessage %></div>
             <% } else { %>
+              <div>
+                <div>Files</div>
+                <% if (!trashedFiles) {
+                  <div></div>
+                } else {
               <% trashedFiles.forEach((file) => { %>
                 <div>
                   <div><%= file.name %></div>
                   <div>
-                    <div>restore</div>
-                    <div>delete</div> 
+                    <div>
+                      <form action="/restoreFile" action="POST">
+                        <input hidden name="restoreThisFile" value="<%=file.id%>">
+                        <button>restore</button>
+                      </form>
+                    </div>
+                    <div>
+                      <form action="/deleteFile" action="POST">
+                         <input hidden name="deleteThisFile" value="<%=file.id%>">
+                        <button>delete forever</button>
+                      </form>
+                    </div>
                   </div>
                 </div>
               <% }) %>
             <% } %>
+              </div>
+              <div>
+                <div>Folders</div>
+                <% if (!trashedFolders){
+                  <div></div>
+                } else {
+                   <% trashedFolders.forEach((folder) => { %>
+                <div>
+                  <div><%= folder.name %></div>
+                  <div>
+                     <div>
+                      <form action="/restoreFolder" method="POST">
+                         <input hidden name="restoreThisFolder" value="<%=folder.id%>">
+                        <button>restore</button>
+                      </form>
+                    </div>
+                     <div>
+                      <form action="/deleteFolder" method="POST">
+                         <input hidden name="deleteThisFolder" value="<%=folder.id%>">
+                        <button>delete forever</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              <% }) %>
+            <% } %>
+                }
+              </div>
 
         <% } %>
 
