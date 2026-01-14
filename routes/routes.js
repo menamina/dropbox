@@ -3,9 +3,9 @@ const router = Router();
 const remote = require("../controls/channels");
 const passport = require("../config/passport");
 const { signUpValidator } = require("../utils/validators");
-const { requireAuth } = require("../utils/middleware");
+const { requireAuth, renderHomeIfAuth } = require("../utils/middleware");
 
-router.get("/", remote.login);
+router.get("/", renderHomeIfAuth, remote.login);
 router.get("/sign-up", remote.getSignUp);
 
 router.post("/sign-up", signUpValidator, remote.authSignUp);

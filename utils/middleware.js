@@ -4,4 +4,11 @@ function requireAuth(req, res, next) {
   }
   next();
 }
-module.exports = { requireAuth };
+
+function renderHomeIfAuth(req, res, next) {
+  if (req.isAuthenticated()) {
+    res.redirect("/home");
+  }
+}
+
+module.exports = { requireAuth, renderHomeIfAuth };

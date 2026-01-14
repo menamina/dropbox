@@ -395,6 +395,18 @@ async function restoreFolder(req, res) {
   }
 }
 
+function logout(req, res) {
+  req.logout(function (error) {
+    if (error) {
+      return res.status(500).json({
+        error: "Cannot log you out - server error",
+      });
+    } else {
+      res.redirect("/login");
+    }
+  });
+}
+
 // async function addFile(req, res) {}
 
 module.exports = {
@@ -415,5 +427,6 @@ module.exports = {
   softDeleteFile,
   restoreFile,
   restoreFolder,
+  logout,
   // addFile,
 };

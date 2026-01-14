@@ -7,7 +7,11 @@
       <div class="leftSide">
         <div class="userinfo sign-out">
           <div><%= name %></div>
-          <div>logout</div>
+          <div>
+            <form action="/logout" method="POST">
+              <button>logout</button>
+            </form>
+          </div>
         </div>
         <div class="newFolder">
           <div onclick="showAddFolderForm()">+ new folder</div>
@@ -135,7 +139,11 @@
                   <label>name:</label>
                   <input name="newFileName" class="editFileName" />
                   <input hidden name="fileID" class="editFileNameId" />
-                  <input hidden name="folderID" value="<%= currentFolder ? currentFolder.id : '' %>" />
+                  <input
+                    hidden
+                    name="folderID"
+                    value="<%= currentFolder ? currentFolder.id : '' %>"
+                  />
                   <button type="submit">update</button>
                   <div>cancel</div>
                 </form>
@@ -149,11 +157,13 @@
                   <input />
                 </form>
               </div>
-              <form class="deleteFileForm" action="/softDeleteFile" method="POST">
+              <form
+                class="deleteFileForm"
+                action="/softDeleteFile"
+                method="POST"
+              >
                 <input hidden class="deleteFileID" name="deleteThisFile" />
-                <button type="button" class="delete">
-                  delete
-                </button>
+                <button type="button" class="delete">delete</button>
               </form>
               <div class="x" onclick="closeOptions()">x</div>
             </div>
