@@ -213,15 +213,16 @@
           <div>No folders here.</div>
         <% } else { %>
           <div class="folderGrid">
-            <% folders.forEach(folder => { %>
-            <div class="folderCard">
-              <a href="/home/<%= folder.id %>"><%= folder.name %></a>
-              <form action="/softDeleteFolder" method="POST">
-                <input hidden name="softDeleteFolder" value="<%= folder.id %>" />
-                <button>delete folder</button>
-              </form>
-            </div>
-            <% }) %>
+          <% folders.forEach(folder => { %>
+          <div class="folderCard">
+            <a href="/home/<%= folder.id %>"><%= folder.name %></a>
+            <form action="/softDeleteFolder" method="POST">
+              <input hidden name="softDeleteFolder" value="<%= folder.id %>" />
+              <input hidden name="redirectTo" value="view-all-folders" />
+              <button>delete folder</button>
+            </form>
+          </div>
+          <% }) %>
           </div>
         <% } %>
         <% } %> <% if (view === "file") { %>

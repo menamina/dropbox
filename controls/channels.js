@@ -339,23 +339,22 @@ async function softDeleteFile(req, res) {
 
 async function softDeleteFolder(req, res) {
   try {
-    const { softDeleteFolder } = req.body;
+    const { softDeleteFolder, redirectTo } = req.body;
     const folderID = Number(softDeleteFolder);
-    const cameFromViewAll = req.get("referer") && req.get("referer").includes("/home/view-all-folders");
 
     const folder = await prisma.folder.findUnique({
       where: { userId: req.user.id, id: folderID },
       select: { trashed: true },
     });
 
-    if (!folder) return res.redirect(cameFromViewAll ? "/home/view-all-folders" : "/home");
+    if (!folder) return res.redirect(redirectTo === "view-all-folders" ? "/home/view-all-folders" : "/home");
 
     await prisma.folder.update({
       where: { userId: req.user.id, id: folderID },
       data: { trashed: true },
     });
 
-    return res.redirect(cameFromViewAll ? "/home/view-all-folders" : "/home");
+    return res.redirect(redirectTo === "view-all-folders" ? "/home/view-all-folders" : "/home");
   } catch (error) {
     console.log(`controller error @ softDeleteFolder - msg: ${error.message}`);
   }
