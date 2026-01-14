@@ -14,15 +14,15 @@
           </div>
         </div>
         <div class="newFolder">
-          <div onclick="showAddFolderForm()">+ new folder</div>
+          <div class="newFolderToggle" onclick="this.nextElementSibling.classList.toggle('hidden')">+ new folder</div>
           <div class="newFolderForm hidden">
-            <form id="addFolderForm">
+            <form id="addFolderForm" action="/addFolder" method="POST">
               <input
                 class="newFolderInput"
                 placeholder="folder name"
                 name="newFolderName"
               />
-              <button type="button" onclick="addFolder(event)">add</button>
+              <button type="submit">add</button>
             </form>
           </div>
         </div>
@@ -49,6 +49,8 @@
         <% } %> <% if (view === "trash") { %>
         <div>Trash</div>
         <div>
+          <% const noTrashedFiles = Array.isArray(trashedFiles) ? trashedFiles.length === 0 : true; %>
+          <% const noTrashedFolders = Array.isArray(trashedFolders) ? trashedFolders.length === 0 : true; %>
           <% if (noTrashedFiles && noTrashedFolders) { %>
           <div><%= emptyMessage %></div>
           <% } else { %>
@@ -118,10 +120,15 @@
           <div>
             <div class="edit" onclick="showEditForm()">edit</div>
             <div class="editForm hidden">
-              <form action="/updateFolder" method="POST">
-                <input name="" value="<%= currentFolder.name %>" />
+              <form action="/updateFolderName" method="POST">
+                <input name="newFolderName" value="<%= currentFolder.name %>" />
+                <input
+                  hidden
+                  name="folderID"
+                  value="<%= currentFolder ? currentFolder.id : '' %>"
+                />
                 <div>
-                  <button onclick="cancelEdit()">cancel</button>
+                  <button type="button" onclick="cancelEdit()">cancel</button>
                   <button>change</button>
                 </div>
               </form>
@@ -202,17 +209,21 @@
         <% } %> <% if (view === "all folders") { %>
         <div>All folders</div>
 
-        <div class="folderGrid">
-          <% folders.forEach(folder => { %>
-          <div class="folderCard">
-            <a href="/home/<%= folder.id %>"><%= folder.name %></a>
-            <form action="/softDeleteFolder" method="POST">
-              <input hidden name="softDeleteFolder" value="<%= folder.id %>" />
-              <button>delete folder</button>
-            </form>
+        <% if (!folders || folders.length === 0) { %>
+          <div>No folders here.</div>
+        <% } else { %>
+          <div class="folderGrid">
+            <% folders.forEach(folder => { %>
+            <div class="folderCard">
+              <a href="/home/<%= folder.id %>"><%= folder.name %></a>
+              <form action="/softDeleteFolder" method="POST">
+                <input hidden name="softDeleteFolder" value="<%= folder.id %>" />
+                <button>delete folder</button>
+              </form>
+            </div>
+            <% }) %>
           </div>
-          <% }) %>
-        </div>
+        <% } %>
         <% } %> <% if (view === "file") { %>
         <div class="fileHeader">
           <div><%= file.name %></div>
@@ -227,7 +238,7 @@
 
     <script>
       let selectedFileID = null;
-      // const currentFolderId = <%= JSON.stringify(currentFolder ? currentFolder.id : null) %>;
+      const currentFolderId = <%= JSON.stringify(currentFolder ? currentFolder.id : null) %>;
 
       function search() {
         const search = document.querySelector(".searchBar");
@@ -277,58 +288,11 @@
 
       function cancelEdit() {
         const editForm = document.querySelector(".editForm");
-        editForm.classList.add(".hidden");
+        editForm.classList.add("hidden");
       }
 
       function moveTo(event) {}
 
-      function showAddFolderForm() {
-        const newFolderShow = document.querySelector(".newFolderForm");
-        newFolderShow.classList.toggle("hidden");
-      }
-
-      async function addFolder(event) {
-        event.preventDefault();
-        const input = document.querySelector(".newFolderInput");
-        const name = input.value;
-
-        if (!name) return;
-
-        try {
-          const res = await fetch("/addFolder", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ newFolderName: name }),
-          });
-
-          console.log("status:", res.status);
-          if (!res.ok) {
-            throw new Error("Failed to create folder");
-          } else {
-            const folder = await res.json();
-
-            const folderList = document.querySelector(".allFolders");
-
-            const foldersRendered = folderList.children;
-            if (foldersRendered.length > 10) {
-              foldersRendered[foldersRendered.length - 1].remove();
-            }
-
-            const div = document.createElement("div");
-            div.innerHTML = `<a href="/home/${folder.id}">${folder.name}</a>`;
-
-            folderList.prepend(div);
-
-            input.value = "";
-            document.querySelector(".newFolderForm").classList.add("hidden");
-          }
-        } catch (err) {
-          console.error(err);
-          alert(err.message);
-        }
-      }
 
       async function restoreFile(event) {
         event.preventDefault();
@@ -399,7 +363,7 @@
         }
       }
 
-      async function deleteFile(event) {
+      async function deleteFolder(event) {
         event.preventDefault();
         const form = event.target.closest("form");
         const folderID = form.deleteThisFolder.value;

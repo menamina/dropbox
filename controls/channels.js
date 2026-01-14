@@ -101,12 +101,15 @@ async function fullHomePage(req, res) {
       orderBy: { createdAt: "asc" },
     });
 
-    const { folderID } = req.params;
-    const numberParam = Number(folderID);
+  const { folderID } = req.params;
+  const numberParam = Number(folderID);
+  if (Number.isNaN(numberParam)) {
+    return res.redirect("/home");
+  }
 
-    const currentFolder = await prisma.folder.findUnique({
-      where: { userId: req.user.id, id: numberParam },
-    });
+  const currentFolder = await prisma.folder.findFirst({
+    where: { userId: req.user.id, id: numberParam, trashed: false },
+  });
 
     if (!currentFolder) {
       return res.render("home", {
@@ -260,17 +263,20 @@ async function getTrash(req, res) {
       orderBy: { createdAt: "asc" },
     });
 
-    res.render("home", {
-      view: "trash",
+  const noTrashedFiles = trashedFiles.length === 0;
+  const noTrashedFolders = trashedFolders.length === 0;
+
+  res.render("home", {
+    view: "trash",
       name: req.user.name,
       folders: folders,
       files: [],
-      file: [],
-      currentFolder: null,
-      emptyMessage: "Nothing to see here",
-      trashedFiles: trashedFiles.length > 0 ? trashedFiles : null,
-      trashedFolders: trashedFolders.length > 0 ? trashedFolders : null,
-    });
+    file: [],
+    currentFolder: null,
+    emptyMessage: noTrashedFiles && noTrashedFolders ? "Nothing to see here" : null,
+    trashedFiles,
+    trashedFolders,
+  });
   } catch (error) {
     res.send(`controller error @ getTrash - msg: ${err.message}`);
   }
