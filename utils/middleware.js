@@ -1,13 +1,16 @@
 function requireAuth(req, res, next) {
   if (!req.isAuthenticated()) {
     return res.redirect("/login");
+  } else {
+    next();
   }
-  next();
 }
 
 function renderHomeIfAuth(req, res, next) {
   if (req.isAuthenticated()) {
-    res.redirect("/home");
+    return res.redirect("/home");
+  } else {
+    next();
   }
 }
 

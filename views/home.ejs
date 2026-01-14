@@ -49,10 +49,7 @@
         <% } %> <% if (view === "trash") { %>
         <div>Trash</div>
         <div>
-          <% const noTrashedFiles = !trashedFiles || trashedFiles.length === 0;
-          %> <% const noTrashedFolders = !trashedFolders ||
-          trashedFolders.length === 0; %> <% if (noTrashedFiles &&
-          noTrashedFolders) { %>
+          <% if (noTrashedFiles && noTrashedFolders) { %>
           <div><%= emptyMessage %></div>
           <% } else { %>
           <div>
@@ -60,19 +57,19 @@
             <% if (noTrashedFiles) { %>
             <div></div>
             <% } else { %> <% trashedFiles.forEach((file) => { %>
-            <div>
+            <div class="inTrash" data-trash-file-id="<%=file.id%>">
               <div><%= file.name %></div>
               <div>
                 <div>
                   <form action="/restoreFile" method="POST">
                     <input hidden name="restoreThisFile" value="<%=file.id%>" />
-                    <button>restore</button>
+                    <button onclick="restoreFile(event)">restore</button>
                   </form>
                 </div>
                 <div>
                   <form action="/deleteFile" method="POST">
                     <input hidden name="deleteThisFile" value="<%=file.id%>" />
-                    <button>delete forever</button>
+                    <button onclick="deleteFile(event)">delete forever</button>
                   </form>
                 </div>
               </div>
@@ -84,7 +81,7 @@
             <% if (noTrashedFolders) { %>
             <div></div>
             <% } else { %> <% trashedFolders.forEach((folder) => { %>
-            <div>
+            <div class="inTrash">
               <div><%= folder.name %></div>
               <div>
                 <div>
@@ -94,7 +91,7 @@
                       name="restoreThisFolder"
                       value="<%=folder.id%>"
                     />
-                    <button>restore</button>
+                    <button onclick="restoreFolder(event)">restore</button>
                   </form>
                 </div>
                 <div>
@@ -104,7 +101,9 @@
                       name="deleteThisFolder"
                       value="<%=folder.id%>"
                     />
-                    <button>delete forever</button>
+                    <button onclick="deleteFolder(event)">
+                      delete forever
+                    </button>
                   </form>
                 </div>
               </div>
@@ -210,7 +209,7 @@
 
     <script>
       let selectedFileID = null;
-      const currentFolderId = <%= JSON.stringify(currentFolder ? currentFolder.id : null) %>;
+      // const currentFolderId = <%= JSON.stringify(currentFolder ? currentFolder.id : null) %>;
 
       function search() {
         const search = document.querySelector(".searchBar");
@@ -305,6 +304,98 @@
         } catch (err) {
           console.error(err);
           alert(err.message);
+        }
+      }
+
+      async function restoreFile(event) {
+        event.preventDefault();
+        const form = event.target.closest("form");
+        const fileID = form.restoreThisFile.value;
+
+        const res = await fetch("/restoreFile", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            restoreThisFile: fileID,
+          }),
+        });
+
+        if (res.ok) {
+          const container = event.target.closest(".inTrash");
+          container.remove();
+        } else {
+          return alert("cannot restore file");
+        }
+      }
+
+      async function deleteFile(event) {
+        event.preventDefault();
+        const form = event.target.closest("form");
+        const fileID = form.deleteThisFile.value;
+
+        const res = await fetch("/deleteFile", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            deleteThisFile: fileID,
+          }),
+        });
+
+        if (res.ok) {
+          const container = event.target.closest(".inTrash");
+          container.remove();
+        } else {
+          return alert("cannot delete file");
+        }
+      }
+
+      async function restoreFolder(event) {
+        event.preventDefault();
+        const form = event.target.closest("form");
+        const folderID = form.restoreThisFolder.value;
+
+        const res = await fetch("/restoreFolder", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            restoreThisFolder: folderID,
+          }),
+        });
+
+        if (res.ok) {
+          const container = event.target.closest(".inTrash");
+          container.remove();
+        } else {
+          return alert("cannot restore folder");
+        }
+      }
+
+      async function deleteFile(event) {
+        event.preventDefault();
+        const form = event.target.closest("form");
+        const folderID = form.deleteThisFolder.value;
+
+        const res = await fetch("/deleteFolder", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            deleteThisFolder: folderID,
+          }),
+        });
+
+        if (res.ok) {
+          const container = event.target.closest(".inTrash");
+          container.remove();
+        } else {
+          return alert("cannot delete folder");
         }
       }
     </script>

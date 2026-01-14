@@ -7,6 +7,7 @@ const { requireAuth, renderHomeIfAuth } = require("../utils/middleware");
 
 router.get("/", renderHomeIfAuth, remote.login);
 router.get("/sign-up", remote.getSignUp);
+router.post("/logout", remote.logout);
 
 router.post("/sign-up", signUpValidator, remote.authSignUp);
 
