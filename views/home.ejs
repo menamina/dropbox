@@ -356,8 +356,8 @@
         });
 
         if (res.ok) {
-          const container = event.target.closest(".inTrash");
-          container.remove();
+          // Reload so the left-side folder list repopulates with the restored folder (capped at 10 shown).
+          window.location.reload();
         } else {
           return alert("cannot restore folder");
         }

@@ -30,10 +30,10 @@ router.post("/", (req, res, next) => {
 });
 
 router.get("/home", requireAuth, remote.renderHome);
-
-router.get("/home/:folderID", requireAuth, remote.fullHomePage);
-router.get("/home/:folderID/:fileID", requireAuth, remote.viewFile);
+router.get("/home/trash", requireAuth, remote.getTrash);
 router.get("/home/view-all-folders", requireAuth, remote.viewAllFolders);
+router.get("/home/:folderID/:fileID", requireAuth, remote.viewFile);
+router.get("/home/:folderID", requireAuth, remote.fullHomePage);
 
 router.post("/addFolder", requireAuth, remote.addFolder);
 router.post("/updateFileName", requireAuth, remote.postUpdatedFileName);
@@ -45,7 +45,5 @@ router.post("/updateFolderName", requireAuth, remote.postUpdateFolder);
 router.post("/softDeleteFolder", requireAuth, remote.softDeleteFolder);
 router.post("/restoreFolder", requireAuth, remote.restoreFolder);
 router.post("/deleteFolder", requireAuth, remote.postDeleteFolder);
-
-router.get("/home/trash", requireAuth, remote.getTrash);
 
 module.exports = router;

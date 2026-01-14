@@ -296,7 +296,13 @@ async function addFolder(req, res) {
         },
       });
 
-      return res.status(201).json(folder);
+      // If this came from an AJAX/fetch request, return JSON; otherwise redirect
+      const wantsJSON =
+        req.headers.accept && req.headers.accept.includes("application/json");
+      if (wantsJSON) {
+        return res.status(201).json(folder);
+      }
+      return res.redirect(`/home/${folder.id}`);
     }
   } catch (error) {
     console.log(`controller error @ addFolder - msg: ${error.message}`);
@@ -335,20 +341,21 @@ async function softDeleteFolder(req, res) {
   try {
     const { softDeleteFolder } = req.body;
     const folderID = Number(softDeleteFolder);
+    const cameFromViewAll = req.get("referer") && req.get("referer").includes("/home/view-all-folders");
 
     const folder = await prisma.folder.findUnique({
       where: { userId: req.user.id, id: folderID },
       select: { trashed: true },
     });
 
-    if (!folder) return res.redirect("/home");
+    if (!folder) return res.redirect(cameFromViewAll ? "/home/view-all-folders" : "/home");
 
     await prisma.folder.update({
       where: { userId: req.user.id, id: folderID },
       data: { trashed: true },
     });
 
-    return res.redirect("/home");
+    return res.redirect(cameFromViewAll ? "/home/view-all-folders" : "/home");
   } catch (error) {
     console.log(`controller error @ softDeleteFolder - msg: ${error.message}`);
   }
