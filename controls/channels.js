@@ -396,15 +396,21 @@ async function restoreFolder(req, res) {
 }
 
 function logout(req, res) {
-  req.logout(function (error) {
-    if (error) {
-      return res.status(500).json({
-        error: "Cannot log you out - server error",
-      });
-    } else {
-      res.redirect("/login");
-    }
-  });
+  try {
+    req.logout(function (error) {
+      if (error) {
+        return res.status(500).json({
+          error: "Cannot log you out - server error",
+        });
+      } else {
+        return res.redirect("/");
+      }
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: `controller error @ logout(): ${error.message}` });
+  }
 }
 
 // async function addFile(req, res) {}
