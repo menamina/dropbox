@@ -116,8 +116,21 @@
         <div class="folderName">
           <div class="enteredFolder"><%=currentFolder.name%></div>
           <div>
-            <div>edit</div>
-            <div>delete</div>
+            <div class="edit" onclick="showEditForm()">edit</div>
+            <div class="editForm hidden">
+              <form action="/updateFolder" method="POST">
+                <input name="" value="<%= currentFolder.name %>" />
+                <div>
+                  <button onclick="cancelEdit()">cancel</button>
+                  <button>change</button>
+                </div>
+              </form>
+            </div>
+            <div>
+              <form action="/softDeleteFolder" method="POST">
+                <button>delete</button>
+              </form>
+            </div>
           </div>
         </div>
         <div class="filesIn SelectedFolderGrid">
@@ -143,8 +156,8 @@
                     name="folderID"
                     value="<%= currentFolder ? currentFolder.id : '' %>"
                   />
+                  <div onclick="cancelEdit">cancel</div>
                   <button type="submit">update</button>
-                  <div>cancel</div>
                 </form>
               </div>
               <div onclick="moveTo(event)">move to</div>
@@ -253,8 +266,13 @@
       }
 
       function closeOptions() {
-        const search = document.querySelector(".searchBar");
-        search.classList.add("hidden");
+        const options = document.querySelector(".options");
+        options.classList.add("hidden");
+      }
+
+      function cancelEdit() {
+        const editForm = document.querySelector(".editForm");
+        editForm.classList.add(".hidden");
       }
 
       function moveTo(event) {}
