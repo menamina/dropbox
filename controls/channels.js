@@ -167,7 +167,7 @@ async function postUpdatedFileName(req, res) {
 
 async function postUpdateFolder(req, res) {
   try {
-    const { folderID, newFolderName } = req.body;
+    const { folderID, newFolderName, redirectTo } = req.body;
     const foundFolder = await prisma.folder.findUnique({
       where: { id: Number(folderID), userId: req.user.id, trashed: false },
     });
@@ -178,7 +178,11 @@ async function postUpdateFolder(req, res) {
           name: newFolderName,
         },
       });
-      return res.redirect(`/home/${folderID}`);
+      const redirectTarget =
+        redirectTo === "view-all-folders"
+          ? "/home/view-all-folders"
+          : `/home/${folderID}`;
+      return res.redirect(redirectTarget);
     }
     return res.redirect("/home");
   } catch (error) {

@@ -14,7 +14,12 @@
           </div>
         </div>
         <div class="newFolder">
-          <div class="newFolderToggle" onclick="this.nextElementSibling.classList.toggle('hidden')">+ new folder</div>
+          <div
+            class="newFolderToggle"
+            onclick="this.nextElementSibling.classList.toggle('hidden')"
+          >
+            + new folder
+          </div>
           <div class="newFolderForm hidden">
             <form id="addFolderForm" action="/addFolder" method="POST">
               <input
@@ -29,7 +34,7 @@
         <div class="allFolders">
           <% if (folders && folders.length > 0) { %> <% folders.slice(0,
           10).forEach(folder => { %>
-          <div class="<%folder.name%>" data-folder-id="<%= folder.id %>">
+          <div class="sideFolder" data-folder-id="<%= folder.id %>">
             <a href="/home/<%=folder.id%>"><%= folder.name %></a>
           </div>
           <% }) %> <% } %>
@@ -47,10 +52,11 @@
         <% if (view === "empty") { %>
         <div><%= emptyMessage %></div>
         <% } %> <% if (view === "trash") { %>
-        <div>Trash</div>
+        <div class="title">Trash</div>
         <div>
-          <% const noTrashedFiles = Array.isArray(trashedFiles) ? trashedFiles.length === 0 : true; %>
-          <% const noTrashedFolders = Array.isArray(trashedFolders) ? trashedFolders.length === 0 : true; %>
+          <% const noTrashedFiles = Array.isArray(trashedFiles) ?
+          trashedFiles.length === 0 : true; %> <% const noTrashedFolders =
+          Array.isArray(trashedFolders) ? trashedFolders.length === 0 : true; %>
           <% if (noTrashedFiles && noTrashedFolders) { %>
           <div><%= emptyMessage %></div>
           <% } else { %>
@@ -116,9 +122,9 @@
         </div>
         <% } %> <% if (view === "folder") { %>
         <div class="folderName">
-          <div class="enteredFolder"><%=currentFolder.name%></div>
+          <div class="title"><%=currentFolder.name%></div>
           <div>
-            <div class="edit" onclick="showEditForm()">edit</div>
+            <div class="edit" onclick="showEditForm(event)">edit</div>
             <div class="editForm hidden">
               <form action="/updateFolderName" method="POST">
                 <input name="newFolderName" value="<%= currentFolder.name %>" />
@@ -127,8 +133,9 @@
                   name="folderID"
                   value="<%= currentFolder ? currentFolder.id : '' %>"
                 />
+                <input hidden name="redirectTo" value="folder" />
                 <div>
-                  <button type="button" onclick="cancelEdit()">cancel</button>
+                  <button type="button" onclick="cancelEdit(event)">cancel</button>
                   <button>change</button>
                 </div>
               </form>
@@ -168,7 +175,7 @@
                     name="folderID"
                     value="<%= currentFolder ? currentFolder.id : '' %>"
                   />
-                  <div onclick="cancelEdit">cancel</div>
+                  <div onclick="cancelEdit(event)">cancel</div>
                   <button type="submit">update</button>
                 </form>
               </div>
@@ -207,12 +214,12 @@
           </div>
         </div>
         <% } %> <% if (view === "all folders") { %>
-        <div>All folders</div>
+        <div class="title">All folders</div>
 
         <% if (!folders || folders.length === 0) { %>
-          <div>No folders here.</div>
+        <div>No folders here.</div>
         <% } else { %>
-          <div class="folderGrid">
+        <div class="folderGrid">
           <% folders.forEach(folder => { %>
           <div class="folderCard">
             <a href="/home/<%= folder.id %>"><%= folder.name %></a>
@@ -221,11 +228,34 @@
               <input hidden name="redirectTo" value="view-all-folders" />
               <button>delete folder</button>
             </form>
+            <div class="editFolderRow">
+              <button type="button" onclick="toggleFolderEdit(event)">
+                edit
+              </button>
+              <form
+                class="folderEditForm hidden"
+                action="/updateFolderName"
+                method="POST"
+              >
+                <input
+                  name="newFolderName"
+                  value="<%= folder.name %>"
+                  aria-label="Rename folder"
+                />
+                <input hidden name="folderID" value="<%= folder.id %>" />
+                <input hidden name="redirectTo" value="view-all-folders" />
+                <div class="editActions">
+                  <button type="button" onclick="cancelEdit(event)">
+                    cancel
+                  </button>
+                  <button>save</button>
+                </div>
+              </form>
+            </div>
           </div>
           <% }) %>
-          </div>
-        <% } %>
-        <% } %> <% if (view === "file") { %>
+        </div>
+        <% } %> <% } %> <% if (view === "file") { %>
         <div class="fileHeader">
           <div><%= file.name %></div>
         </div>
@@ -240,6 +270,22 @@
     <script>
       let selectedFileID = null;
       const currentFolderId = <%= JSON.stringify(currentFolder ? currentFolder.id : null) %>;
+
+      function showEditForm(event) {
+        const container = event.target.closest("div");
+        const editForm = container ? container.querySelector(".editForm") : null;
+        if (editForm) {
+          editForm.classList.remove("hidden");
+        }
+      }
+
+      function toggleFolderEdit(event) {
+        const card = event.target.closest(".folderCard");
+        const form = card ? card.querySelector(".folderEditForm") : null;
+        if (form) {
+          form.classList.toggle("hidden");
+        }
+      }
 
       function search() {
         const search = document.querySelector(".searchBar");
@@ -264,22 +310,28 @@
           openLink.href = `/home/${currentFolderId}/${fileName}`;
         }
 
-        const edit = document.querySelector(".edit");
-        edit.addEventListener("click", (event) => {
-          const editForm = document.querySelector(".editForm");
-          editForm.classList.remove("hidden");
-          const editFileName = document.querySelector(".editFileName");
-          editFileName.value = fileName;
-          const editFileNameID = document.querySelector(".editFileNameId");
-          editFileNameID.value = fileID;
-        });
+        const edit = optionsDiv.querySelector(".edit");
+        edit.onclick = () => {
+          const editForm = optionsDiv.querySelector(".editForm");
+          if (editForm) {
+            editForm.classList.remove("hidden");
+          }
+          const editFileName = optionsDiv.querySelector(".editFileName");
+          if (editFileName) {
+            editFileName.value = fileName;
+          }
+          const editFileNameID = optionsDiv.querySelector(".editFileNameId");
+          if (editFileNameID) {
+            editFileNameID.value = fileID;
+          }
+        };
 
-        const deleteBtn = document.querySelector(".delete");
-        deleteBtn.addEventListener("click", (event) => {
+        const deleteBtn = optionsDiv.querySelector(".delete");
+        deleteBtn.onclick = () => {
           const deleteFileID = document.querySelector(".deleteFileID");
           deleteFileID.value = fileID;
           document.querySelector(".deleteFileForm").submit();
-        });
+        };
       }
 
       function closeOptions() {
@@ -287,9 +339,13 @@
         options.classList.add("hidden");
       }
 
-      function cancelEdit() {
-        const editForm = document.querySelector(".editForm");
-        editForm.classList.add("hidden");
+      function cancelEdit(event) {
+        const editForm = event
+          ? event.target.closest(".editForm")
+          : document.querySelector(".editForm");
+        if (editForm) {
+          editForm.classList.add("hidden");
+        }
       }
 
       function moveTo(event) {}
@@ -357,7 +413,6 @@
         });
 
         if (res.ok) {
-          // Reload so the left-side folder list repopulates with the restored folder (capped at 10 shown).
           window.location.reload();
         } else {
           return alert("cannot restore folder");
