@@ -53,14 +53,14 @@
         <div><%= emptyMessage %></div>
         <% } %> <% if (view === "trash") { %>
         <div class="title">Trash</div>
-        <div>
+        <div class="splitTrash">
           <% const noTrashedFiles = Array.isArray(trashedFiles) ?
           trashedFiles.length === 0 : true; %> <% const noTrashedFolders =
           Array.isArray(trashedFolders) ? trashedFolders.length === 0 : true; %>
           <% if (noTrashedFiles && noTrashedFolders) { %>
           <div><%= emptyMessage %></div>
           <% } else { %>
-          <div>
+          <div class="foldersTrash">
             <div>Files</div>
             <% if (noTrashedFiles) { %>
             <div></div>
@@ -84,7 +84,7 @@
             </div>
             <% }) %> <% } %>
           </div>
-          <div>
+          <div class="foldersTrash">
             <div>Folders</div>
             <% if (noTrashedFolders) { %>
             <div></div>
@@ -123,7 +123,7 @@
         <% } %> <% if (view === "folder") { %>
         <div class="folderName">
           <div class="title"><%=currentFolder.name%></div>
-          <div>
+          <div class="editDelFolder">
             <div class="edit" onclick="showEditForm(event)">edit</div>
             <div class="editForm hidden">
               <form action="/updateFolderName" method="POST">
@@ -135,7 +135,9 @@
                 />
                 <input hidden name="redirectTo" value="folder" />
                 <div>
-                  <button type="button" onclick="cancelEdit(event)">cancel</button>
+                  <button type="button" onclick="cancelEdit(event)">
+                    cancel
+                  </button>
                   <button>change</button>
                 </div>
               </form>
@@ -272,11 +274,14 @@
       const currentFolderId = <%= JSON.stringify(currentFolder ? currentFolder.id : null) %>;
 
       function showEditForm(event) {
-        const container = event.target.closest("div");
-        const editForm = container ? container.querySelector(".editForm") : null;
-        if (editForm) {
-          editForm.classList.remove("hidden");
-        }
+        const containerWithForm =
+          event.target.closest(".folderName") ||
+          event.target.closest(".editFolderRow");
+        const editForm =
+          containerWithForm &&
+          (containerWithForm.querySelector(".editForm") ||
+            containerWithForm.querySelector(".folderEditForm"));
+        if (editForm) editForm.classList.remove("hidden");
       }
 
       function toggleFolderEdit(event) {
