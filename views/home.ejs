@@ -60,14 +60,14 @@
           <% if (noTrashedFiles && noTrashedFolders) { %>
           <div><%= emptyMessage %></div>
           <% } else { %>
-          <div class="foldersTrash">
+          <div class="filesTrash">
             <div>Files</div>
             <% if (noTrashedFiles) { %>
             <div></div>
             <% } else { %> <% trashedFiles.forEach((file) => { %>
             <div class="inTrash" data-trash-file-id="<%=file.id%>">
               <div><%= file.name %></div>
-              <div>
+              <div class="resDelTrash">
                 <div>
                   <form action="/restoreFile" method="POST">
                     <input hidden name="restoreThisFile" value="<%=file.id%>" />
@@ -91,7 +91,7 @@
             <% } else { %> <% trashedFolders.forEach((folder) => { %>
             <div class="inTrash">
               <div><%= folder.name %></div>
-              <div>
+              <div class="resDelTrash">
                 <div>
                   <form action="/restoreFolder" method="POST">
                     <input

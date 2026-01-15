@@ -13,7 +13,9 @@
 .rightSide > div,
 .editDelFolder,
 .filesTrash,
-.foldersTrash {
+.foldersTrash,
+.inTrash,
+.resDelTrash {
   display: flex;
 }
 
@@ -33,8 +35,14 @@
 }
 
 .userinfo,
-.folderName {
+.folderName,
+.inTrash {
   justify-content: space-between;
+}
+
+.rightSide > .folderGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 250px);
 }
 
 .parent {
@@ -84,7 +92,7 @@
   height: 80%;
   width: 50%;
   border-radius: 5px;
-  background-color: rgb(154, 154, 133);
+  background-color: rgb(230, 230, 230);
   cursor: pointer;
 }
 
@@ -143,10 +151,15 @@ a:visited {
 .filesTrash,
 .foldersTrash {
   width: 50%;
+  gap: 20px;
 }
 
 .filesTrash > div:first-child,
 .foldersTrash > div:first-child {
   text-align: center;
   border-bottom: 1px dotted gray;
+}
+
+.resDelTrash {
+  gap: 50px;
 }
