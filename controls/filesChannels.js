@@ -16,7 +16,7 @@ async function addFile(req, res) {
       }));
       await prisma.file.createMany({ data });
 
-      res.redirect(`/folders/${folderID}`);
+      res.redirect(`/home/${folderID}`);
     }
   } catch (error) {
     console.log(error.message);

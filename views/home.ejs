@@ -224,14 +224,13 @@
               data-file-name="<%= file.name %>"
               onclick="openOptions(event)"
             >
-              <div>
-                <img
-                  src="/home/<%= currentFolder.id %>/<%= file.id %>"
-                  alt="<%= file.name %>"
-                  loading="lazy"
-                  onerror="this.style.display='none'"
-                />
-              </div>
+              <img
+                src="/home/<%= currentFolder.id %>/<%= file.id %>"
+                alt="<%= file.name %>"
+                loading="lazy"
+                onerror="this.style.display='none'"
+                class="fileInFolderPreview"
+              />
               <div><%= file.name %></div>
             </div>
             <% }) %> <% } %>
