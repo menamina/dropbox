@@ -434,17 +434,6 @@ function logout(req, res) {
   }
 }
 
-function viewFile(req, res){
-  try {
-    const file = await prisma.file.findUnique({
-      where: { userId: req.user.id, fileId: req.params.fileID }
-    })
-    res.render("viewFile", {
-      file: file
-    })
-  }
-}
-
 module.exports = {
   login,
   getSignUp,
@@ -463,6 +452,5 @@ module.exports = {
   softDeleteFile,
   restoreFile,
   restoreFolder,
-  logout,
-  viewFile
+  logout
 };

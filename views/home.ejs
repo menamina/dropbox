@@ -120,7 +120,9 @@
           </div>
           <% } %>
         </div>
-        <% } %> <% if (view === "folder") { %>
+        <% } %> <% if (view === "folder") { %> <% if (!currentFolder) { %>
+        <div>No folder selected.</div>
+        <% } else { %>
         <div class="folderName">
           <div class="title"><%=currentFolder.name%></div>
           <div class="editDelFolder">
@@ -156,7 +158,7 @@
         </div>
         <div class="filesIn SelectedFolderGrid">
           <div>
-            <div onclick="">+ new file</div>
+            <div onclick="openAddFile(event)">+ new file</div>
             <div class="newFile hidden">
               <form
                 action="/upload"
@@ -176,7 +178,18 @@
           <div class="options hidden">
             <div>
               <div><a class="linkTo">open</a></div>
-              <div class="download">download</div>
+              <div class="download">
+                <% if (files && files.length > 0) { %>
+                <a
+                  href="/home/<%= currentFolder.id %>/<%= files[0].id %>"
+                  download
+                >
+                  Download
+                </a>
+                <% } else { %>
+                <div></div>
+                <% }%>
+              </div>
               <div class="edit">edit</div>
               <div class="editForm hidden">
                 <form action="/updateFileName" method="POST">
@@ -224,7 +237,7 @@
             <% }) %> <% } %>
           </div>
         </div>
-        <% } %> <% if (view === "all folders") { %>
+        <% } %> <% } %> <% if (view === "all folders") { %>
         <div class="title">All folders</div>
 
         <% if (!folders || folders.length === 0) { %>
@@ -451,6 +464,12 @@
         } else {
           return alert("cannot delete folder");
         }
+      }
+
+      function openAddFile(event){
+        const uploadDiv = document.querySelector(".newFile");
+        uploadDiv.classList.toggle("hidden");
+
       }
     </script>
   </body>
