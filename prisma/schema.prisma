@@ -38,6 +38,7 @@ model Folder {
 model File {
   id Int @id @default(autoincrement())
   name String
+  multerName String
   createdAt DateTime @default(now())
   trashed Boolean @default(false)
 

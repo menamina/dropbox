@@ -101,15 +101,15 @@ async function fullHomePage(req, res) {
       orderBy: { createdAt: "asc" },
     });
 
-  const { folderID } = req.params;
-  const numberParam = Number(folderID);
-  if (Number.isNaN(numberParam)) {
-    return res.redirect("/home");
-  }
+    const { folderID } = req.params;
+    const numberParam = Number(folderID);
+    if (Number.isNaN(numberParam)) {
+      return res.redirect("/home");
+    }
 
-  const currentFolder = await prisma.folder.findFirst({
-    where: { userId: req.user.id, id: numberParam, trashed: false },
-  });
+    const currentFolder = await prisma.folder.findFirst({
+      where: { userId: req.user.id, id: numberParam, trashed: false },
+    });
 
     if (!currentFolder) {
       return res.render("home", {
@@ -267,20 +267,21 @@ async function getTrash(req, res) {
       orderBy: { createdAt: "asc" },
     });
 
-  const noTrashedFiles = trashedFiles.length === 0;
-  const noTrashedFolders = trashedFolders.length === 0;
+    const noTrashedFiles = trashedFiles.length === 0;
+    const noTrashedFolders = trashedFolders.length === 0;
 
-  res.render("home", {
-    view: "trash",
+    res.render("home", {
+      view: "trash",
       name: req.user.name,
       folders: folders,
       files: [],
-    file: [],
-    currentFolder: null,
-    emptyMessage: noTrashedFiles && noTrashedFolders ? "Nothing to see here" : null,
-    trashedFiles,
-    trashedFolders,
-  });
+      file: [],
+      currentFolder: null,
+      emptyMessage:
+        noTrashedFiles && noTrashedFolders ? "Nothing to see here" : null,
+      trashedFiles,
+      trashedFolders,
+    });
   } catch (error) {
     res.send(`controller error @ getTrash - msg: ${err.message}`);
   }
@@ -300,7 +301,6 @@ async function addFolder(req, res) {
         },
       });
 
-      // If this came from an AJAX/fetch request, return JSON; otherwise redirect
       const wantsJSON =
         req.headers.accept && req.headers.accept.includes("application/json");
       if (wantsJSON) {
@@ -351,14 +351,19 @@ async function softDeleteFolder(req, res) {
       select: { trashed: true },
     });
 
-    if (!folder) return res.redirect(redirectTo === "view-all-folders" ? "/home/view-all-folders" : "/home");
+    if (!folder)
+      return res.redirect(
+        redirectTo === "view-all-folders" ? "/home/view-all-folders" : "/home"
+      );
 
     await prisma.folder.update({
       where: { userId: req.user.id, id: folderID },
       data: { trashed: true },
     });
 
-    return res.redirect(redirectTo === "view-all-folders" ? "/home/view-all-folders" : "/home");
+    return res.redirect(
+      redirectTo === "view-all-folders" ? "/home/view-all-folders" : "/home"
+    );
   } catch (error) {
     console.log(`controller error @ softDeleteFolder - msg: ${error.message}`);
   }
@@ -429,8 +434,6 @@ function logout(req, res) {
   }
 }
 
-// async function addFile(req, res) {}
-
 module.exports = {
   login,
   getSignUp,
@@ -450,5 +453,4 @@ module.exports = {
   restoreFile,
   restoreFolder,
   logout,
-  // addFile,
 };

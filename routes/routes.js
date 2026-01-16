@@ -37,7 +37,12 @@ router.get("/home/view-all-folders", requireAuth, remote.viewAllFolders);
 router.get("/home/:folderID/:fileID", requireAuth, remote.viewFile);
 router.get("/home/:folderID", requireAuth, remote.fullHomePage);
 
-router.post("/upload", someMulter middleware, multerRemote.something);
+router.post(
+  "/upload",
+  requireAuth,
+  multer.array("files", 5),
+  multerRemote.addFile
+);
 
 router.post("/addFolder", requireAuth, remote.addFolder);
 router.post("/updateFileName", requireAuth, remote.postUpdatedFileName);

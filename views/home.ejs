@@ -157,6 +157,17 @@
         <div class="filesIn SelectedFolderGrid">
           <div>
             <div onclick="">+ new file</div>
+            <div class="newFile hidden">
+              <form
+                action="/upload"
+                method="POST"
+                enctype="multipart/form-data"
+              >
+                <input hidden name="folderId" value="<%= currentFolder.id%>" />
+                <input type="file" name="files" multiple />
+                <button>upload</button>
+              </form>
+            </div>
           </div>
           <div>
             <label hidden for="searchBar"></label>
@@ -181,15 +192,6 @@
                   <button type="submit">update</button>
                 </form>
               </div>
-              <div onclick="moveTo(event)">move to</div>
-              <div class="moveTo hidden">
-                <form>
-                  <label>from:</label>
-                  <input />
-                  <label>to:</label>
-                  <input />
-                </form>
-              </div>
               <form
                 class="deleteFileForm"
                 action="/softDeleteFile"
@@ -209,7 +211,14 @@
               data-file-name="<%= file.name %>"
               onclick="openOptions(event)"
             >
-              <div>preview if possible?</div>
+              <div>
+                <img
+                  src="/home/<%= currentFolder.id %>/<%= file.id %>"
+                  alt="<%= file.name %>"
+                  loading="lazy"
+                  onerror="this.style.display='none'"
+                />
+              </div>
               <div><%= file.name %></div>
             </div>
             <% }) %> <% } %>
@@ -352,9 +361,6 @@
           editForm.classList.add("hidden");
         }
       }
-
-      function moveTo(event) {}
-
 
       async function restoreFile(event) {
         event.preventDefault();
