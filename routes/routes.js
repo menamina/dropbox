@@ -4,6 +4,8 @@ const remote = require("../controls/channels");
 const passport = require("../config/passport");
 const { signUpValidator } = require("../utils/validators");
 const { requireAuth, renderHomeIfAuth } = require("../utils/middleware");
+const multer = require("../config/multer");
+const multerRemote = require("../controls/filesChannels");
 
 router.get("/", renderHomeIfAuth, remote.login);
 router.get("/sign-up", remote.getSignUp);
@@ -34,6 +36,8 @@ router.get("/home/trash", requireAuth, remote.getTrash);
 router.get("/home/view-all-folders", requireAuth, remote.viewAllFolders);
 router.get("/home/:folderID/:fileID", requireAuth, remote.viewFile);
 router.get("/home/:folderID", requireAuth, remote.fullHomePage);
+
+router.post("/upload", someMulter middleware, multerRemote.something);
 
 router.post("/addFolder", requireAuth, remote.addFolder);
 router.post("/updateFileName", requireAuth, remote.postUpdatedFileName);
