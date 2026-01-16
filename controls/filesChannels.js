@@ -26,14 +26,15 @@ async function addFile(req, res) {
 async function viewFile(req, res) {
   try {
     const fileID = Number(req.params.fileID);
-    userID = req.user.id;
-    const file = await prisma.file.findUnique({
+    const userID = req.user.id;
+    const file = await prisma.file.findFirst({
       where: {
+        id: fileID,
         userId: userID,
-        fileId: fileID,
         folderId: Number(req.params.folderID),
       },
     });
+    if (!file) return res.status(404).send("File not found");
     const filePath = path.resolve("uploads", file.multerName);
     return res.sendFile(filePath);
   } catch (error) {
