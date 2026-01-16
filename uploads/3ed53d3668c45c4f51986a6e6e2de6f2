@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>palindrome</title>
+    <link rel="stylesheet" href="palindrome.css">
+</head>
+
+
+<body>
+    <h3>enter a word!</h3><br>
+    <input class="textbox">
+    <button class="btn">submit</button><br>
+    <h3>palindrome or no palindrome</h3><br>
+    <div>This word...</div><br>
+    <div class="result"></div>
+</body>
+
+<script src="palindrome.js"></script>
+</html>

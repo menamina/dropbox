@@ -1,0 +1,21 @@
+let btn = document.querySelector(".btn")
+btn.addEventListener('click', function(){
+
+    let bill = parseFloat(document.querySelector(".bill").value);
+    let tipPerc = parseFloat(document.querySelector(".tipPerc").value);
+    let guestNum = parseFloat(document.querySelector(".guestNum").value);
+
+    let tipLabel = document.querySelector(".tipAmount");
+    let totalLabel = document.querySelector(".total");
+    let perPersonlabel = document.querySelector(".totalPerPerson");
+
+
+    let tip = bill * (tipPerc / 100);
+    let total = bill + tip;
+    let perperson = bill / guestNum;
+
+    tipLabel.textContent = `$${tip.toFixed(2)}`;
+    totalLabel.textContent = `$${total.toFixed(2)}`;
+    perPersonlabel.textContent = `$${perperson.toFixed(2)}`;
+
+});

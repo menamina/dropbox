@@ -157,8 +157,8 @@
           </div>
         </div>
         <div class="filesIn SelectedFolderGrid">
-          <div>
-            <div onclick="openAddFile(event)">+ new file</div>
+          <div class="newFile Search">
+            <div class="newFile" onclick="openAddFile(event)">+ new file</div>
             <div class="newFile hidden">
               <form
                 action="/upload"
@@ -184,7 +184,7 @@
                   href="/home/<%= currentFolder.id %>/<%= files[0].id %>"
                   download
                 >
-                  Download
+                  download
                 </a>
                 <% } else { %>
                 <div></div>
@@ -228,7 +228,7 @@
                 src="/home/<%= currentFolder.id %>/<%= file.id %>"
                 alt="<%= file.name %>"
                 loading="lazy"
-                onerror="this.style.display='none'"
+                onerror="this.style.display='flex'"
                 class="fileInFolderPreview"
               />
               <div><%= file.name %></div>
@@ -353,10 +353,19 @@
         };
 
         const deleteBtn = optionsDiv.querySelector(".delete");
-        deleteBtn.onclick = () => {
-          const deleteFileID = document.querySelector(".deleteFileID");
-          deleteFileID.value = fileID;
-          document.querySelector(".deleteFileForm").submit();
+        deleteBtn.onclick = async () => {
+          const res = await fetch("/softDeleteFile", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ deleteThisFile: fileID }),
+          });
+
+          if (res.ok) {
+            fileEl.remove();
+            closeOptions();
+          } else {
+            alert("cannot delete file");
+          }
         };
       }
 
@@ -465,10 +474,12 @@
         }
       }
 
-      function openAddFile(event){
-        const uploadDiv = document.querySelector(".newFile");
-        uploadDiv.classList.toggle("hidden");
-
+      function openAddFile(event) {
+        const trigger = event.target.closest(".newFile");
+        const uploadDiv = trigger ? trigger.nextElementSibling : null;
+        if (uploadDiv) {
+          uploadDiv.classList.toggle("hidden");
+        }
       }
     </script>
   </body>

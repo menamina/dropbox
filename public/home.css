@@ -15,7 +15,9 @@
 .filesTrash,
 .foldersTrash,
 .inTrash,
-.resDelTrash {
+.resDelTrash,
+.filesIn,
+.options {
   display: flex;
 }
 
@@ -58,10 +60,26 @@
 
 .fileHolder {
   height: 200px;
-  background-color: yellow;
+  gap: 20px;
+  margin-top: 20px;
 }
 
 .hidden {
+  display: none;
+}
+
+.searchBar {
+  display: none;
+}
+
+.options {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.options.hidden {
   display: none;
 }
 
@@ -187,4 +205,12 @@ a:visited {
   display: flex;
   flex-direction: column;
   align-items: center;
+  border-radius: 5px;
+  padding: 10px;
+  border: 1px solid gray;
+  cursor: pointer;
+}
+
+.newFile {
+  font-size: 1.5rem;
 }
