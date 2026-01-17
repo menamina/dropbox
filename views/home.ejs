@@ -219,7 +219,7 @@
               data-file-id="<%= file.id%>"
               data-folder-id="<%= currentFolder.id %>"
               data-file-name="<%= file.name %>"
-              onclick="openFile(event)"
+              onclick="openOptions(event)"
             >
               <img
                 src="/home/<%= currentFolder.id %>/<%= file.id %>"
@@ -360,7 +360,13 @@
 
         const openLink = document.querySelector(".linkTo");
         if (currentFolderId) {
-          openLink.href = `/home/${currentFolderId}/${fileName}`;
+          openLink.href = `/home/${currentFolderId}/view-file/${fileID}`;
+        }
+
+        const downloadLink = optionsDiv.querySelector(".download a");
+        if (downloadLink && currentFolderId) {
+          downloadLink.href = `/home/${currentFolderId}/${fileID}`;
+          downloadLink.download = fileName;
         }
 
         const edit = optionsDiv.querySelector(".edit");

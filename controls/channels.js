@@ -232,9 +232,20 @@ async function viewAllFolders(req, res) {
 async function viewFile(req, res) {
   try {
     const { folderID, fileID } = req.params;
-    const findFile = await prisma.file.findUnique({
-      where: { id: fileID, userId: req.user.id },
+    const fileIdNum = Number(fileID);
+    const folderIdNum = Number(folderID);
+
+    if (Number.isNaN(fileIdNum) || Number.isNaN(folderIdNum)) {
+      return res.status(400).send("Invalid file or folder id");
+    }
+
+    const findFile = await prisma.file.findFirst({
+      where: { id: fileIdNum, userId: req.user.id, folderId: folderIdNum },
     });
+
+    if (!findFile) {
+      return res.status(404).send("File not found");
+    }
 
     res.render("home", {
       view: "file",
@@ -247,7 +258,7 @@ async function viewFile(req, res) {
       trashedFiles: null,
     });
   } catch (error) {
-    res.send(`controller error @ viewFile - msg: ${err.message}`);
+    res.send(`controller error @ viewFile - msg: ${error.message}`);
   }
 }
 
