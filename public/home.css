@@ -17,7 +17,9 @@
 .inTrash,
 .resDelTrash,
 .filesIn,
-.options {
+.optionsHolder,
+.folderCard,
+.folderCard > div {
   display: flex;
 }
 
@@ -26,7 +28,8 @@
 .allFolders,
 .filesIn,
 .filesTrash,
-.foldersTrash {
+.foldersTrash,
+.folderCard {
   flex-direction: column;
 }
 
@@ -65,21 +68,6 @@
 }
 
 .hidden {
-  display: none;
-}
-
-.searchBar {
-  display: none;
-}
-
-.options {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.options.hidden {
   display: none;
 }
 
@@ -213,4 +201,50 @@ a:visited {
 
 .newFile {
   font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.optionsHolder {
+  width: 100%;
+  gap: 30px;
+  font-size: 2rem;
+}
+
+.optionsHolder > div {
+  cursor: pointer;
+}
+
+.optionsHolder > div:hover {
+  background-color: rgb(188, 188, 188);
+  border-radius: 5px;
+}
+
+.folderGrid {
+  height: 200px;
+  max-height: 200px;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.folderCard {
+  border: 1px solid gray;
+  border-radius: 5px;
+  min-height: 100%;
+  height: 100%;
+}
+
+.folderCard > div {
+  justify-content: space-between;
+  border-top: 1px solid gray;
+  height: 20%;
+  align-items: center;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+.linkToFolder {
+  height: 80%;
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
 }

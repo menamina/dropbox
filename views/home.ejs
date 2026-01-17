@@ -157,7 +157,7 @@
           </div>
         </div>
         <div class="filesIn SelectedFolderGrid">
-          <div class="newFile Search">
+          <div class="newFile">
             <div class="newFile" onclick="openAddFile(event)">+ new file</div>
             <div class="newFile hidden">
               <form
@@ -171,12 +171,8 @@
               </form>
             </div>
           </div>
-          <div>
-            <label hidden for="searchBar"></label>
-            <input class="searchBar" name="searchBar" placeholder="search" />
-          </div>
           <div class="options hidden">
-            <div>
+            <div class="optionsHolder">
               <div><a class="linkTo">open</a></div>
               <div class="download">
                 <% if (files && files.length > 0) { %>
@@ -213,7 +209,7 @@
                 <input hidden class="deleteFileID" name="deleteThisFile" />
                 <button type="button" class="delete">delete</button>
               </form>
-              <div class="x" onclick="closeOptions()">x</div>
+              <div class="x" onclick="closeOptions()">close</div>
             </div>
           </div>
           <div class="fileHolder">
@@ -245,35 +241,43 @@
         <div class="folderGrid">
           <% folders.forEach(folder => { %>
           <div class="folderCard">
-            <a href="/home/<%= folder.id %>"><%= folder.name %></a>
-            <form action="/softDeleteFolder" method="POST">
-              <input hidden name="softDeleteFolder" value="<%= folder.id %>" />
-              <input hidden name="redirectTo" value="view-all-folders" />
-              <button>delete folder</button>
-            </form>
-            <div class="editFolderRow">
-              <button type="button" onclick="toggleFolderEdit(event)">
-                edit
-              </button>
-              <form
-                class="folderEditForm hidden"
-                action="/updateFolderName"
-                method="POST"
-              >
+            <a class="linkToFolder" href="/home/<%= folder.id %>"
+              ><%= folder.name %></a
+            >
+            <div>
+              <form action="/softDeleteFolder" method="POST">
                 <input
-                  name="newFolderName"
-                  value="<%= folder.name %>"
-                  aria-label="Rename folder"
+                  hidden
+                  name="softDeleteFolder"
+                  value="<%= folder.id %>"
                 />
-                <input hidden name="folderID" value="<%= folder.id %>" />
                 <input hidden name="redirectTo" value="view-all-folders" />
-                <div class="editActions">
-                  <button type="button" onclick="cancelEdit(event)">
-                    cancel
-                  </button>
-                  <button>save</button>
-                </div>
+                <button>delete folder</button>
               </form>
+              <div class="editFolderRow">
+                <button type="button" onclick="toggleFolderEdit(event)">
+                  edit
+                </button>
+                <form
+                  class="folderEditForm hidden"
+                  action="/updateFolderName"
+                  method="POST"
+                >
+                  <input
+                    name="newFolderName"
+                    value="<%= folder.name %>"
+                    aria-label="Rename folder"
+                  />
+                  <input hidden name="folderID" value="<%= folder.id %>" />
+                  <input hidden name="redirectTo" value="view-all-folders" />
+                  <div class="editActions">
+                    <button type="button" onclick="cancelEdit(event)">
+                      cancel
+                    </button>
+                    <button>save</button>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
           <% }) %>
@@ -313,12 +317,6 @@
         }
       }
 
-      function search() {
-        const search = document.querySelector(".searchBar");
-        search.addEventListener("input", (event) => {
-          const query = event.target.value;
-        });
-      }
 
       function openOptions(event) {
         const optionsDiv = document.querySelector(".options");
@@ -376,8 +374,8 @@
 
       function cancelEdit(event) {
         const editForm = event
-          ? event.target.closest(".editForm")
-          : document.querySelector(".editForm");
+          ? event.target.closest(".editForm, .folderEditForm")
+          : document.querySelector(".editForm, .folderEditForm");
         if (editForm) {
           editForm.classList.add("hidden");
         }
