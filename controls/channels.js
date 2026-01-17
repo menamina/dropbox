@@ -232,8 +232,8 @@ async function viewAllFolders(req, res) {
 async function viewFile(req, res) {
   try {
     const { folderID, fileID } = req.params;
-    const fileIdNum = Number(fileID);
-    const folderIdNum = Number(folderID);
+    const fileIdNum = parseInt(fileID, 10);
+    const folderIdNum = parseInt(folderID, 10);
 
     if (Number.isNaN(fileIdNum) || Number.isNaN(folderIdNum)) {
       return res.status(400).send("Invalid file or folder id");
@@ -253,7 +253,7 @@ async function viewFile(req, res) {
       folders: [],
       files: [],
       file: findFile,
-      currentFolder: null,
+      currentFolder: { id: folderIdNum },
       emptyMessage: null,
       trashedFiles: null,
     });

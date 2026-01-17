@@ -173,7 +173,6 @@
           </div>
           <div class="options hidden">
             <div class="optionsHolder">
-              <div><a class="linkTo">open</a></div>
               <div class="download">
                 <% if (files && files.length > 0) { %>
                 <a
@@ -283,45 +282,7 @@
           </div>
           <% }) %>
         </div>
-        <% } %> <% } %> <% if (view === "file") { %>
-        <div class="fileHeader">
-          <div class="title"><%= file.name %></div>
-          <div class="fileActions">
-            <button type="button" onclick="toggleFileEdit()">edit</button>
-            <form action="/softDeleteFile" method="POST">
-              <input hidden name="deleteThisFile" value="<%= file.id %>" />
-              <button type="submit">delete</button>
-            </form>
-            <a class="fileDownload" href="/home/<%= file.folderId %>/<%= file.id %>" download>download</a>
-          </div>
-        </div>
-
-        <form class="fileEditForm hidden" action="/updateFileName" method="POST">
-          <label for="newFileName">name</label>
-          <input
-            id="newFileName"
-            name="newFileName"
-            value="<%= file.name %>"
-            aria-label="Rename file"
-          />
-          <input hidden name="fileID" value="<%= file.id %>" />
-          <input hidden name="folderID" value="<%= file.folderId %>" />
-          <div class="fileActions">
-            <button type="button" onclick="toggleFileEdit()">cancel</button>
-            <button type="submit">save</button>
-          </div>
-        </form>
-
-        <div class="fileViewer">
-          <object
-            data="/home/<%= file.folderId %>/<%= file.id %>"
-            type="text/html"
-            class="fileFrame"
-          >
-            <p>Preview not available. <a href="/home/<%= file.folderId %>/<%= file.id %>">Download</a></p>
-          </object>
-        </div>
-        <% } %>
+        <% } %> <% } %>
       </div>
     </div>
 
@@ -357,11 +318,6 @@
         const fileID = fileEl.dataset.fileId;
         const fileName = fileEl.dataset.fileName;
         selectedFileID = fileID;
-
-        const openLink = document.querySelector(".linkTo");
-        if (currentFolderId) {
-          openLink.href = `/home/${currentFolderId}/view-file/${fileID}`;
-        }
 
         const downloadLink = optionsDiv.querySelector(".download a");
         if (downloadLink && currentFolderId) {
@@ -505,11 +461,6 @@
         } else {
           return alert("cannot delete folder");
         }
-      }
-
-      function toggleFileEdit() {
-        const form = document.querySelector(".fileEditForm");
-        if (form) form.classList.toggle("hidden");
       }
 
       function openAddFile(event) {
